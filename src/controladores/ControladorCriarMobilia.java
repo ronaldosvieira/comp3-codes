@@ -28,7 +28,13 @@ public class ControladorCriarMobilia extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doGet(request, response);
+		String descricao = request.getParameter("descricao");
+		float custo = Float.parseFloat(request.getParameter("custo"));
+		int tempoEntrega = Integer.parseInt(request.getParameter("tempoEntrega"));
+		
+		// TODO inserir mobilia
+		
+		response.sendRedirect("../FronteiraLerMobilia.jsp");
 	}
 
 }

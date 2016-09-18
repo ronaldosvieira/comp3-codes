@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<form method="get" action="./itemVenda/guardar">
+<form method="post" action="./criar">
 	<h2>Criar Item Venda</h2>
 	<input type="number" name="quantidade" placeholder="Quantidade"><br>
 	<button type="submit">Enviar</button>

@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<form method="get" action="./comodoComposto/guardar">
+<form method="post" action="./criar">
 	<h2>Criar Comodo Composto</h2>
 	<input type="text" name="descricao" placeholder="Descrição"><br>
 	<button type="submit">Enviar</button>

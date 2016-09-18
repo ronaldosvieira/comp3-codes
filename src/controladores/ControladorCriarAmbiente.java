@@ -28,7 +28,13 @@ public class ControladorCriarAmbiente extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doGet(request, response);
+		int numParedes = Integer.parseInt(request.getParameter("numParedes"));
+		int numPortas = Integer.parseInt(request.getParameter("numPortas"));
+		float metragem = Float.parseFloat(request.getParameter("metragem"));
+		
+		// TODO inserir ambiente
+		
+		response.sendRedirect("../FronteiraLerAmbiente.jsp");
 	}
 
 }

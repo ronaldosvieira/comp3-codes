@@ -8,11 +8,11 @@
 </head>
 <body>
 
-<form method="get" action="./ambiente/guardar">
+<form method="post" action="./criar">
 	<h2>Criar Ambiente</h2>
 	<input type="number" name="numParedes" placeholder="Núm. de paredes"><br>
 	<input type="number" name="numPortas" placeholder="Núm. de portas"><br>
-	<input type="number" name="metragem" step=0.01 placeholder="Núm. de paredes"><br>
+	<input type="number" name="metragem" step=0.01 placeholder="Metragem"><br>
 	<button type="submit">Enviar</button>
 </form>
 

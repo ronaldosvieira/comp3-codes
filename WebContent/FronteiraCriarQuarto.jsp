@@ -4,12 +4,12 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Criar Cozinha</title>
+<title>Criar Quarto</title>
 </head>
 <body>
 
 <form method="post" action="./criar">
-	<h2>Criar Cozinha</h2>
+	<h2>Criar Quarto</h2>
 	<input type="text" name="descricao" placeholder="Descrição"><br>
 	<button type="submit">Enviar</button>
 </form>

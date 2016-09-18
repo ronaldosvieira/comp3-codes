@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<form method="get" action="./sala/guardar">
+<form method="post" action="./criar">
 	<h2>Criar Sala</h2>
 	<input type="text" name="descricao" placeholder="Descrição"><br>
 	<button type="submit">Enviar</button>

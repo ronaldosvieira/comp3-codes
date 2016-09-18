@@ -8,11 +8,11 @@
 </head>
 <body>
 
-<form method="get" action="./mobilia/guardar">
+<form method="post" action="./criar">
 	<h2>Criar Mobília</h2>
 	<input type="text" name="descricao" placeholder="Descrição"><br>
-	<input type="number" name="descricao" step=0.01 placeholder="Custo (R$)"><br>
-	<input type="number" name="descricao" placeholder="Tempo de Entrega (dias)"><br>
+	<input type="number" name="custo" step=0.01 placeholder="Custo (R$)"><br>
+	<input type="number" name="tempoEntrega" placeholder="Tempo de Entrega (dias)"><br>
 	<button type="submit">Enviar</button>
 </form>
 

@@ -28,7 +28,11 @@ public class ControladorCriarSala extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doGet(request, response);
+		String descricao = request.getParameter("descricao");
+		
+		// TODO inserir sala
+		
+		response.sendRedirect("../FronteiraLerSala.jsp");
 	}
 
 }
