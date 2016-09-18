@@ -35,8 +35,11 @@ public class ControladorAlterarCozinha extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+		String descricao = request.getParameter("descricao");
+		
+		// TODO alterar cozinha
+		
+		response.sendRedirect("../FronteiraLerCozinha.jsp");
 	}
 
 }
