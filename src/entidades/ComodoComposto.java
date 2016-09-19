@@ -1,11 +1,14 @@
 package entidades;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class ComodoComposto extends Comodo {
 	private List<Comodo> comodos;
+	
+	public ComodoComposto(String descricao) {
+		super(descricao);
+	}
 	
 	@Override
 	List<Mobilia> listaMobiliaDisponivel() {
@@ -16,6 +19,10 @@ public class ComodoComposto extends Comodo {
 		}
 		
 		return mobilias;
+	}
+	
+	public List<Comodo> obterComodos() {
+		return this.comodos;
 	}
 
 }

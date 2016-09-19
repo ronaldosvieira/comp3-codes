@@ -8,6 +8,12 @@ public class Ambiente {
 	private int numPortas;
 	private float metragem;
 	
+	public Ambiente(int numParedes, int numPortas, float metragem) {
+		this.numParedes = numParedes;
+		this.numPortas = numPortas;
+		this.metragem = metragem;
+	}
+	
 	public float custo() {
 		float custo = 0.0f;
 		
@@ -29,4 +35,22 @@ public class Ambiente {
 		
 		return tempo;
 	}
+
+	public List<ItemVenda> obterItens() {
+		return itens;
+	}
+
+	public int obterNumParedes() {
+		return numParedes;
+	}
+
+	public int obterNumPortas() {
+		return numPortas;
+	}
+
+	public float obterMetragem() {
+		return metragem;
+	}
+	
+	
 }
