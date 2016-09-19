@@ -12,7 +12,7 @@
 	<h2>Remover Comodo Composto</h2>
 	<input type="hidden" name="id" value="<%= request.getAttribute("id") %>">
 	
-	<p>Deseja remover o comodo composto <%= request.getAttribute("id") %>?">
+	<p>Deseja remover o comodo composto <%= request.getAttribute("id") %>?
 	<br>
 	<select name="remover">
 		<option value="true">Sim</option>

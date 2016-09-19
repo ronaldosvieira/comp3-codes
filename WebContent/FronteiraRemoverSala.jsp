@@ -12,15 +12,10 @@
 	<h2>Remover Sala</h2>
 	<input type="hidden" name="id" value="<%= request.getAttribute("id") %>">
 	
-	<p>Deseja remover a sala <%= request.getAttribute("id") %>?">
+	<p>Deseja remover a sala <%= request.getAttribute("id") %>?
 	<br>
-	<select name="remover">
-		<option value="true">Sim</option>
-		<option value="false">Não</option>
-	</select>
-	<br>
-	<button type="submit">Enviar</button>
+	<button type="submit">Sim</button>
+	<a href="./ler">Não</a>
 </form>
-
 </body>
 </html>

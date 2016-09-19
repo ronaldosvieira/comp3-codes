@@ -12,7 +12,7 @@
 	<h2>Remover Cozinha</h2>
 	<input type="hidden" name="id" value="<%= request.getAttribute("id") %>">
 	
-	<p>Deseja remover a cozinha <%= request.getAttribute("id") %>?">
+	<p>Deseja remover a cozinha <%= request.getAttribute("id") %>?
 	<br>
 	<select name="remover">
 		<option value="true">Sim</option>
