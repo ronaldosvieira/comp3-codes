@@ -6,6 +6,10 @@ public class Contrato {
 	private List<Ambiente> ambientes;
 	private float comissao;
 	
+	public Contrato(float comissao) {
+		this.comissao = comissao;
+	}
+	
 	public float valorContrato() {
 		float valor = 0.0f;
 		
@@ -26,5 +30,10 @@ public class Contrato {
 		}
 		
 		return prazoMax;
+	}
+	
+
+	public float obterComissao() {
+		return this.comissao;
 	}
 }

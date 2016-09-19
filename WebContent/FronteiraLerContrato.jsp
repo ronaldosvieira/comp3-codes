@@ -4,14 +4,14 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Ler ambiente</title>
+<title>Ler Contrato</title>
 </head>
 <body>
 
-<h2>Alterar Ambiente</h2>
+<h2>Ler Contrato</h2>
 
-<%@ page import = "entidades.Ambiente" %>
-<% Ambiente ambiente = (Ambiente) request.getAttribute("ambiente"); %>
+<%@ page import = "entidades.Contrato" %>
+<% Contrato contrato = (Contrato) request.getAttribute("contrato"); %>
 
 <table>
 	<tr>
@@ -19,16 +19,8 @@
 		<td><%= request.getAttribute("id") %></td>
 	</tr>
 	<tr>
-		<th align="right">Número de paredes</th>
-		<td><%= ambiente.obterNumParedes() %></td>
-	</tr>
-	<tr>
-		<th align="right">Número de portas</th>
-		<td><%= ambiente.obterNumPortas() %></td>
-	</tr>
-	<tr>
-		<th align="right">Metragem</th>
-		<td><%= ambiente.obterMetragem() %></td>
+		<th align="right">Comissão</th>
+		<td><%= contrato.obterComissao() %></td>
 	</tr>
 </table>
 

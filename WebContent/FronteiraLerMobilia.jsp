@@ -4,14 +4,14 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Ler ambiente</title>
+<title>Ler Mobília</title>
 </head>
 <body>
 
-<h2>Alterar Ambiente</h2>
+<h2>Ler Mobília</h2>
 
-<%@ page import = "entidades.Ambiente" %>
-<% Ambiente ambiente = (Ambiente) request.getAttribute("ambiente"); %>
+<%@ page import = "entidades.Mobilia" %>
+<% Mobilia mobilia = (Mobilia) request.getAttribute("mobilia"); %>
 
 <table>
 	<tr>
@@ -19,16 +19,16 @@
 		<td><%= request.getAttribute("id") %></td>
 	</tr>
 	<tr>
-		<th align="right">Número de paredes</th>
-		<td><%= ambiente.obterNumParedes() %></td>
+		<th align="right">Descrição</th>
+		<td><%= mobilia.obterDescricao() %></td>
 	</tr>
 	<tr>
-		<th align="right">Número de portas</th>
-		<td><%= ambiente.obterNumPortas() %></td>
+		<th align="right">Custo (R$)</th>
+		<td><%= mobilia.obterCusto() %></td>
 	</tr>
 	<tr>
-		<th align="right">Metragem</th>
-		<td><%= ambiente.obterMetragem() %></td>
+		<th align="right">Tempo de entrega (em dias)</th>
+		<td><%= mobilia.obterTempoEntrega() %></td>
 	</tr>
 </table>
 
