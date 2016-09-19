@@ -27,17 +27,17 @@ public class ControladorLerComodoComposto extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int id = Integer.parseInt(request.getParameter("id"));
 		
-		// TODO lógica do banco
-		List<ComodoComposto> comodoCompostos = new ArrayList<>();
+		// TODO logica do banco
+		List<ComodoComposto> comodosCompostos = new ArrayList<>();
 		
-		comodoCompostos.add(new ComodoComposto("Suíte"));
-		comodoCompostos.add(new ComodoComposto("Sala de estudos"));
-		comodoCompostos.add(new ComodoComposto("Cozinha americana"));
+		comodosCompostos.add(new ComodoComposto("Suite"));
+		comodosCompostos.add(new ComodoComposto("Sala de estudos"));
+		comodosCompostos.add(new ComodoComposto("Cozinha americana"));
 		
 		ComodoComposto comodoComposto;
 		
 		try {
-			comodoComposto = comodoCompostos.get(id);
+			comodoComposto = comodosCompostos.get(id);
 			request.setAttribute("comodoComposto", comodoComposto);
 		} catch (IndexOutOfBoundsException e) {
 			request.setAttribute("comodoComposto", null);

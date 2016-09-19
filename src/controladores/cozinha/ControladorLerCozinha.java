@@ -26,11 +26,11 @@ public class ControladorLerCozinha extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int id = Integer.parseInt(request.getParameter("id"));
 		
-		// TODO lógica do banco
+		// TODO logica do banco
 		List<Cozinha> cozinhas = new ArrayList<>();
 		
 		cozinhas.add(new Cozinha("Cozinha Moderna"));
-		cozinhas.add(new Cozinha("Cozinha Rústica"));
+		cozinhas.add(new Cozinha("Cozinha Rustica"));
 		cozinhas.add(new Cozinha("Cozinha Azul"));
 		
 		Cozinha cozinha;
