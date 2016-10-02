@@ -8,12 +8,18 @@
 </head>
 <body>
 
+<%@ page import = "entidades.Cozinha" %>
+
+<% Cozinha cozinha = 
+	(Cozinha) request.getAttribute("cozinha"); %>
+
 <form method="post" action="./alterar">
 	<h2>Alterar Cozinha</h2>
+	
 	<input type="hidden" name="id" value="<%= request.getAttribute("id") %>">
 	
 	<input type="text" name="descricao" placeholder="Descrição" 
-		value="<%= request.getAttribute("descricao") %>">
+		value="<%= cozinha.obterDescricao() %>">
 	<br>
 	<button type="submit">Enviar</button>
 </form>

@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import entidades.Cozinha;
+import persistencia.CozinhaBanco;
+
 /**
  * Servlet implementation class ControladorCriarCozinha
  */
@@ -30,9 +33,16 @@ public class ControladorCriarCozinha extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String descricao = request.getParameter("descricao");
 		
-		// TODO inserir cozinha
+		Cozinha cozinha = new Cozinha(descricao);
 		
-		response.sendRedirect("../FronteiraLerCozinha.jsp");
+		try (CozinhaBanco bd = new CozinhaBanco()) {
+			bd.insert(cozinha);
+		} catch (Exception e) {
+			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+			e.printStackTrace(response.getWriter());
+		}
+		
+		response.sendRedirect("../cozinha/ler");
 	}
 
 }

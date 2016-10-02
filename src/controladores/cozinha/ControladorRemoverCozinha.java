@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import entidades.Cozinha;
+import persistencia.CozinhaBanco;
 
 /**
  * Servlet implementation class ControladorRemoverCozinha
@@ -26,22 +27,6 @@ public class ControladorRemoverCozinha extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int id = Integer.parseInt(request.getParameter("id"));
 		
-		// TODO logica do banco
-		List<Cozinha> cozinhas = new ArrayList<>();
-		
-		cozinhas.add(new Cozinha("Cozinha Moderna"));
-		cozinhas.add(new Cozinha("Cozinha Rustica"));
-		cozinhas.add(new Cozinha("Cozinha Azul"));
-		
-		Cozinha cozinha;
-		
-		try {
-			cozinha = cozinhas.get(id);
-			request.setAttribute("cozinha", cozinha);
-		} catch (IndexOutOfBoundsException e) {
-			request.setAttribute("cozinha", null);
-		}
-		
 		request.setAttribute("id", id);
 		
 		RequestDispatcher rd = request.getRequestDispatcher("../FronteiraRemoverCozinha.jsp");
@@ -52,8 +37,17 @@ public class ControladorRemoverCozinha extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+		int id = Integer.parseInt(request.getParameter("id"));
+
+		try (CozinhaBanco bd = new CozinhaBanco()) {
+			bd.remove(id);
+		} catch (Exception e) {
+			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+			e.printStackTrace(response.getWriter());
+			return;
+		}
+		
+		response.sendRedirect("ler");
 	}
 
 }

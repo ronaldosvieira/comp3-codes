@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import entidades.Cozinha;
+import persistencia.CozinhaBanco;
 
 /**
  * Servlet implementation class ControladorLerCozinha
@@ -24,25 +25,17 @@ public class ControladorLerCozinha extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		int id = Integer.parseInt(request.getParameter("id"));
+		List<Cozinha> cozinhas = null;
 		
-		// TODO logica do banco
-		List<Cozinha> cozinhas = new ArrayList<>();
-		
-		cozinhas.add(new Cozinha("Cozinha Moderna"));
-		cozinhas.add(new Cozinha("Cozinha Rustica"));
-		cozinhas.add(new Cozinha("Cozinha Azul"));
-		
-		Cozinha cozinha;
-		
-		try {
-			cozinha = cozinhas.get(id);
-			request.setAttribute("cozinha", cozinha);
-		} catch (IndexOutOfBoundsException e) {
-			request.setAttribute("cozinha", null);
+		try (CozinhaBanco bd = new CozinhaBanco()) {
+			cozinhas = bd.get();
+		} catch (Exception e) {
+			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+			e.printStackTrace(response.getWriter());
+			return;
 		}
 		
-		request.setAttribute("id", id);
+		request.setAttribute("cozinhas", cozinhas);
 		
 		RequestDispatcher rd = request.getRequestDispatcher("../FronteiraLerCozinha.jsp");
 		rd.forward(request, response);

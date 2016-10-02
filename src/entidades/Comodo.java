@@ -3,6 +3,7 @@ package entidades;
 import java.util.List;
 
 public abstract class Comodo {
+	private Integer id;
 	protected List<Mobilia> mobiliasDisponiveis;
 	private String descricao;
 	
@@ -10,7 +11,16 @@ public abstract class Comodo {
 		this.descricao = descricao;
 	}
 	
+	public Comodo(int id, String descricao) {
+		this.id = new Integer(id);
+		this.descricao = descricao;
+	}
+	
 	abstract List<Mobilia> listaMobiliaDisponivel();
+	
+	public int obterId() {
+		return this.id;
+	}
 	
 	public String obterDescricao() {
 		return this.descricao;

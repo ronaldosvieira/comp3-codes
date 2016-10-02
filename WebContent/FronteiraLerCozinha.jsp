@@ -11,19 +11,38 @@
 <h2>Ler Cozinha</h2>
 
 <%@ page import = "entidades.Cozinha" %>
-<% Cozinha cozinha = 
-	(Cozinha) request.getAttribute("cozinha"); %>
+<%@ page import = "java.util.List" %>
+
+<% List<Cozinha> cozinhas = 
+	(List<Cozinha>) request.getAttribute("cozinhas"); %>
 
 <table>
-	<tr>
-		<th align="right">Id</th>
-		<td><%= request.getAttribute("id") %></td>
-	</tr>
-	<tr>
-		<th align="right">Descrição</th>
-		<td><%= cozinha.obterDescricao() %></td>
-	</tr>
+	<thead>
+		<tr>
+			<th>Id</th>
+			<th>Descrição</th>
+			<th>Ações</th>
+		</tr>
+	</thead>
+	<tbody>
+	<% for (Cozinha cozinha : cozinhas) { %>
+		<tr>
+			<td><%= cozinha.obterId() %></td>
+			<td><%= cozinha.obterDescricao() %></td>
+			<td>
+				<a href="alterar?id=<%= cozinha.obterId() %>">
+					Editar
+				</a>&nbsp; 
+				<a href="remover?id=<%= cozinha.obterId() %>">
+					Remover
+				</a> 
+			</td>
+		</tr>
+	<% } %>
+	</tbody>
 </table>
+
+<a href="criar">Criar</a>
 
 </body>
 </html>
