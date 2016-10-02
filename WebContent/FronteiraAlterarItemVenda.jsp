@@ -16,6 +16,7 @@
 		value="<%= request.getAttribute("quantidade") %>">
 	<br>
 	<button type="submit">Enviar</button>
+	<a href="ler">Voltar</a>
 </form>
 
 </body>

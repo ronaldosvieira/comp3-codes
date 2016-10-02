@@ -22,6 +22,7 @@
 		value="<%= cozinha.obterDescricao() %>">
 	<br>
 	<button type="submit">Enviar</button>
+	<a href="ler">Voltar</a>
 </form>
 
 </body>

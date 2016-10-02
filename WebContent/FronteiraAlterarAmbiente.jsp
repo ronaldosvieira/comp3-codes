@@ -22,6 +22,7 @@
 		value="<%= request.getAttribute("metragem") %>">
 		<br>
 	<button type="submit">Enviar</button>
+	<a href="ler">Voltar</a>
 </form>
 
 </body>
