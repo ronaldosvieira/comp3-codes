@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import entidades.Sala;
+import persistencia.SalaBanco;
+
 /**
  * Servlet implementation class ControladorCriarSala
  */
@@ -30,9 +33,16 @@ public class ControladorCriarSala extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String descricao = request.getParameter("descricao");
 		
-		// TODO inserir sala
+		Sala sala = new Sala(descricao);
 		
-		response.sendRedirect("../FronteiraLerSala.jsp");
+		try (SalaBanco bd = new SalaBanco()) {
+			bd.insert(sala);
+		} catch (Exception e) {
+			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+			e.printStackTrace(response.getWriter());
+		}
+		
+		response.sendRedirect("../sala/ler");
 	}
 
 }

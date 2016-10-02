@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import entidades.Quarto;
+import persistencia.QuartoBanco;
+
 /**
  * Servlet implementation class ControladorAlterarQuarto
  */
@@ -20,12 +23,26 @@ public class ControladorAlterarQuarto extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		int id = Integer.parseInt(request.getParameter("id"));
+		int id;
+		Quarto quarto = null;
 		
-		// TODO obter quarto id
-		String descricao = "";
+		try {
+			id = Integer.parseInt(request.getParameter("id"));
+		} catch (NumberFormatException e) {
+			response.sendRedirect("ler");
+			return;
+		}
 		
-		request.setAttribute("descricao", descricao);
+		try (QuartoBanco bd = new QuartoBanco()) {
+			quarto = bd.get(id);
+		} catch (Exception e) {
+			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+			e.printStackTrace(response.getWriter());
+			return;
+		}
+		
+		request.setAttribute("id", id);
+		request.setAttribute("quarto", quarto);
 		
 		RequestDispatcher rd = request.getRequestDispatcher("../FronteiraAlterarQuarto.jsp");
 		rd.forward(request, response);
@@ -35,11 +52,20 @@ public class ControladorAlterarQuarto extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int id = Integer.parseInt(request.getParameter("id"));
 		String descricao = request.getParameter("descricao");
 		
-		// TODO alterar quarto
+		Quarto quarto = new Quarto(id, descricao);
 		
-		response.sendRedirect("../FronteiraLerQuarto.jsp");
+		try (QuartoBanco bd = new QuartoBanco()) {
+			bd.update(id, quarto);
+		} catch (Exception e) {
+			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+			e.printStackTrace(response.getWriter());
+			return;
+		}
+		
+		response.sendRedirect("ler");
 	}
 
 }

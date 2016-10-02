@@ -8,12 +8,18 @@
 </head>
 <body>
 
+<%@ page import = "entidades.Quarto" %>
+
+<% Quarto quarto = 
+	(Quarto) request.getAttribute("quarto"); %>
+
 <form method="post" action="./alterar">
 	<h2>Alterar Quarto</h2>
+	
 	<input type="hidden" name="id" value="<%= request.getAttribute("id") %>">
 	
 	<input type="text" name="descricao" placeholder="Descrição" 
-		value="<%= request.getAttribute("descricao") %>">
+		value="<%= quarto.obterDescricao() %>">
 	<br>
 	<button type="submit">Enviar</button>
 </form>

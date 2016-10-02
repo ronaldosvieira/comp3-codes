@@ -11,18 +11,38 @@
 <h2>Ler Quarto</h2>
 
 <%@ page import = "entidades.Quarto" %>
-<% Quarto quarto = (Quarto) request.getAttribute("quarto"); %>
+<%@ page import = "java.util.List" %>
+
+<% List<Quarto> quartos = 
+	(List<Quarto>) request.getAttribute("quartos"); %>
 
 <table>
-	<tr>
-		<th align="right">Id</th>
-		<td><%= request.getAttribute("id") %></td>
-	</tr>
-	<tr>
-		<th align="right">Descrição</th>
-		<td><%= quarto.obterDescricao() %></td>
-	</tr>
+	<thead>
+		<tr>
+			<th>Id</th>
+			<th>Descrição</th>
+			<th>Ações</th>
+		</tr>
+	</thead>
+	<tbody>
+	<% for (Quarto quarto : quartos) { %>
+		<tr>
+			<td><%= quarto.obterId() %></td>
+			<td><%= quarto.obterDescricao() %></td>
+			<td>
+				<a href="alterar?id=<%= quarto.obterId() %>">
+					Editar
+				</a>&nbsp; 
+				<a href="remover?id=<%= quarto.obterId() %>">
+					Remover
+				</a> 
+			</td>
+		</tr>
+	<% } %>
+	</tbody>
 </table>
+
+<a href="criar">Criar</a>
 
 </body>
 </html>

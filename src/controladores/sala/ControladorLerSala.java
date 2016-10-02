@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import entidades.Sala;
+import entidades.Sala;
+import persistencia.SalaBanco;
 
 /**
  * Servlet implementation class ControladorLerSala
@@ -24,25 +26,17 @@ public class ControladorLerSala extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		int id = Integer.parseInt(request.getParameter("id"));
+List<Sala> salas = null;
 		
-		// TODO logica do banco
-		List<Sala> salas = new ArrayList<>();
-		
-		salas.add(new Sala("Sala de Estar"));
-		salas.add(new Sala("Sala de Jogos"));
-		salas.add(new Sala("Sala Sadomazoquista"));
-		
-		Sala sala;
-		
-		try {
-			sala = salas.get(id);
-			request.setAttribute("sala", sala);
-		} catch (IndexOutOfBoundsException e) {
-			request.setAttribute("sala", null);
+		try (SalaBanco bd = new SalaBanco()) {
+			salas = bd.get();
+		} catch (Exception e) {
+			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+			e.printStackTrace(response.getWriter());
+			return;
 		}
 		
-		request.setAttribute("id", id);
+		request.setAttribute("salas", salas);
 		
 		RequestDispatcher rd = request.getRequestDispatcher("../FronteiraLerSala.jsp");
 		rd.forward(request, response);

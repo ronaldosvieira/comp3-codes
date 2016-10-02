@@ -9,12 +9,12 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import entidades.Cozinha;
+import entidades.Sala;
 
-public class CozinhaBanco implements AutoCloseable {
+public class SalaBanco implements AutoCloseable {
 	Connection conn;
 	
-	public CozinhaBanco() throws ClassNotFoundException, SQLException {
+	public SalaBanco() throws ClassNotFoundException, SQLException {
 		Class.forName("org.h2.Driver");
 		
 		String url = "jdbc:h2:~/decoradora";
@@ -24,20 +24,20 @@ public class CozinhaBanco implements AutoCloseable {
 		conn = DriverManager.getConnection(url, user, pass);
 	}
 	
-	public List<Cozinha> get() throws SQLException {
+	public List<Sala> get() throws SQLException {
 		String sql = "select * "
 				+ "from comodo "
-				+ "join cozinha on id = comodo_id";
+				+ "join sala on id = comodo_id";
 		ResultSet rs = null;
 		
 		PreparedStatement stmt = conn.prepareStatement(sql);
 		
 		if (stmt.execute()) rs = stmt.getResultSet();
 		
-		List<Cozinha> results = new ArrayList<>();
+		List<Sala> results = new ArrayList<>();
 		
 		while (rs.next()) {
-			results.add(new Cozinha(
+			results.add(new Sala(
 					rs.getInt("id"),
 					rs.getString("descricao")));
 		}
@@ -45,13 +45,13 @@ public class CozinhaBanco implements AutoCloseable {
 		return results;
 	}
 	
-	public Cozinha get(int id) throws SQLException, IndexOutOfBoundsException {
+	public Sala get(int id) throws SQLException, IndexOutOfBoundsException {
 		String sql = "select * "
 				+ "from comodo "
-				+ "join cozinha on id = comodo_id "
+				+ "join sala on id = comodo_id "
 				+ "where id = ?";
 		ResultSet rs = null;
-		Cozinha cozinha = null;
+		Sala sala = null;
 		
 		PreparedStatement stmt = conn.prepareStatement(sql);
 		stmt.setInt(1, id);
@@ -62,20 +62,20 @@ public class CozinhaBanco implements AutoCloseable {
 		}
 		
 		if (rs.next()) {
-			cozinha = new Cozinha(rs.getInt("id"), rs.getString("descricao"));
+			sala = new Sala(rs.getInt("id"), rs.getString("descricao"));
 		} else {
 			throw new IndexOutOfBoundsException();
 		}
 		
-		return cozinha;
+		return sala;
 	}
 	
-	public int insert(Cozinha cozinha) throws SQLException {
+	public int insert(Sala sala) throws SQLException {
 		String sql1 = "insert into comodo (descricao) values (?)";
-		String sql2 = "insert into cozinha (comodo_id) values (?)";
+		String sql2 = "insert into sala (comodo_id) values (?)";
 		
 		PreparedStatement stmt = conn.prepareStatement(sql1, Statement.RETURN_GENERATED_KEYS);
-		stmt.setString(1, cozinha.obterDescricao());
+		stmt.setString(1, sala.obterDescricao());
 		
 		stmt.executeUpdate();
 		
@@ -89,24 +89,24 @@ public class CozinhaBanco implements AutoCloseable {
 				stmt2.executeUpdate();
 			}
 		} catch (Exception e) {
-			throw new SQLException("Erro ao inserir cozinha.");
+			throw new SQLException("Erro ao inserir sala.");
 		}
 		
 		return -1;
 	}
 
-	public void update(int id, Cozinha cozinha) throws SQLException {
+	public void update(int id, Sala sala) throws SQLException {
 		String sql = "update comodo set descricao = ? where id = ?";
 		
 		PreparedStatement stmt = conn.prepareStatement(sql);
-		stmt.setString(1, cozinha.obterDescricao());
+		stmt.setString(1, sala.obterDescricao());
 		stmt.setInt(2, id);
 		
 		stmt.executeUpdate();
 	}
 	
 	public boolean remove(int id) throws SQLException {
-		String sql = "delete from cozinha where comodo_id = ?";
+		String sql = "delete from sala where comodo_id = ?";
 		
 		PreparedStatement stmt = conn.prepareStatement(sql);
 		stmt.setString(1, String.valueOf(id));

@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import entidades.Quarto;
+import persistencia.QuartoBanco;
 
 /**
  * Servlet implementation class ControladorRemoverQuarto
@@ -24,23 +25,7 @@ public class ControladorRemoverQuarto extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		int id = Integer.parseInt(request.getParameter("id"));
-		
-		// TODO logica do banco
-		List<Quarto> quartos = new ArrayList<>();
-		
-		quartos.add(new Quarto("Quarto Moderno"));
-		quartos.add(new Quarto("Quarto Rústico"));
-		quartos.add(new Quarto("Quarto Azul"));
-		
-		Quarto quarto;
-		
-		try {
-			quarto = quartos.get(id);
-			request.setAttribute("quarto", quarto);
-		} catch (IndexOutOfBoundsException e) {
-			request.setAttribute("quarto", null);
-		}
+int id = Integer.parseInt(request.getParameter("id"));
 		
 		request.setAttribute("id", id);
 		
@@ -52,8 +37,17 @@ public class ControladorRemoverQuarto extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+		int id = Integer.parseInt(request.getParameter("id"));
+
+		try (QuartoBanco bd = new QuartoBanco()) {
+			bd.remove(id);
+		} catch (Exception e) {
+			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+			e.printStackTrace(response.getWriter());
+			return;
+		}
+		
+		response.sendRedirect("ler");
 	}
 
 }

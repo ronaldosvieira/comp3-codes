@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import entidades.Quarto;
+import persistencia.QuartoBanco;
+
 /**
  * Servlet implementation class ControladorCriarQuarto
  */
@@ -30,9 +33,16 @@ public class ControladorCriarQuarto extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String descricao = request.getParameter("descricao");
 		
-		// TODO inserir quarto
+		Quarto quarto = new Quarto(descricao);
 		
-		response.sendRedirect("../FronteiraLerQuarto.jsp");
+		try (QuartoBanco bd = new QuartoBanco()) {
+			bd.insert(quarto);
+		} catch (Exception e) {
+			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+			e.printStackTrace(response.getWriter());
+		}
+		
+		response.sendRedirect("../quarto/ler");
 	}
 
 }

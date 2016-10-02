@@ -4,25 +4,45 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Sala</title>
+<title>Ler Sala</title>
 </head>
 <body>
 
 <h2>Ler Sala</h2>
 
 <%@ page import = "entidades.Sala" %>
-<% Sala sala = (Sala) request.getAttribute("sala"); %>
+<%@ page import = "java.util.List" %>
+
+<% List<Sala> salas = 
+	(List<Sala>) request.getAttribute("salas"); %>
 
 <table>
-	<tr>
-		<th align="right">Id</th>
-		<td><%= request.getAttribute("id") %></td>
-	</tr>
-	<tr>
-		<th align="right">Descrição</th>
-		<td><%= sala.obterDescricao() %></td>
-	</tr>
+	<thead>
+		<tr>
+			<th>Id</th>
+			<th>Descrição</th>
+			<th>Ações</th>
+		</tr>
+	</thead>
+	<tbody>
+	<% for (Sala sala : salas) { %>
+		<tr>
+			<td><%= sala.obterId() %></td>
+			<td><%= sala.obterDescricao() %></td>
+			<td>
+				<a href="alterar?id=<%= sala.obterId() %>">
+					Editar
+				</a>&nbsp; 
+				<a href="remover?id=<%= sala.obterId() %>">
+					Remover
+				</a> 
+			</td>
+		</tr>
+	<% } %>
+	</tbody>
 </table>
+
+<a href="criar">Criar</a>
 
 </body>
 </html>
