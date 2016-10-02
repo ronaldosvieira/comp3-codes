@@ -13,10 +13,7 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="D:/tomcat-7.0/lib/servlet-api.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="F:/Ronaldo/Documents/eclipse/javaee-workspace/apache-tomcat-7.0.72/lib/servlet-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/Program Files (x86)/H2/bin/h2-1.4.192.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
