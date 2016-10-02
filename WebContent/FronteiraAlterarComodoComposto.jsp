@@ -8,11 +8,19 @@
 </head>
 <body>
 
+<%@ page import = "entidades.ComodoComposto" %>
+
+<% ComodoComposto comodoComposto = 
+	(ComodoComposto) request.getAttribute("comodoComposto"); %>
+
 <form method="post" action="./alterar">
 	<h2>Alterar Comodo Composto</h2>
+	
 	<input type="hidden" name="id" value="<%= request.getAttribute("id") %>">
+	
 	<input type="text" name="descricao" placeholder="Descrição" 
-		value="<%= request.getAttribute("descricao") %>"><br>
+		value="<%= comodoComposto.obterDescricao() %>">
+	<br>
 	<button type="submit">Enviar</button>
 </form>
 

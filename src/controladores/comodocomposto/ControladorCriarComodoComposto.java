@@ -9,20 +9,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import entidades.ComodoComposto;
+import persistencia.ComodoCompostoBanco;
+
 /**
  * Servlet implementation class ControladorCriarComodoComposto
  */
 @WebServlet("/comodocomposto/criar")
 public class ControladorCriarComodoComposto extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public ControladorCriarComodoComposto() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -38,9 +33,16 @@ public class ControladorCriarComodoComposto extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String descricao = request.getParameter("descricao");
 		
-		// TODO inserir comodo composto
+		ComodoComposto comodoComposto = new ComodoComposto(descricao);
 		
-		response.sendRedirect("../FronteiraLerComodoComposto.jsp");
+		try (ComodoCompostoBanco bd = new ComodoCompostoBanco()) {
+			bd.insert(comodoComposto);
+		} catch (Exception e) {
+			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+			e.printStackTrace(response.getWriter());
+		}
+		
+		response.sendRedirect("../comodocomposto/ler");
 	}
 
 }

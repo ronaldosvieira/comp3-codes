@@ -11,19 +11,38 @@
 <h2>Ler Comodo Composto</h2>
 
 <%@ page import = "entidades.ComodoComposto" %>
-<% ComodoComposto comodoComposto = 
-	(ComodoComposto) request.getAttribute("comodoComposto"); %>
+<%@ page import = "java.util.List" %>
+
+<% List<ComodoComposto> comodoCompostos = 
+	(List<ComodoComposto>) request.getAttribute("comodoCompostos"); %>
 
 <table>
-	<tr>
-		<th align="right">Id</th>
-		<td><%= request.getAttribute("id") %></td>
-	</tr>
-	<tr>
-		<th align="right">Descrição</th>
-		<td><%= comodoComposto.obterDescricao() %></td>
-	</tr>
+	<thead>
+		<tr>
+			<th>Id</th>
+			<th>Descrição</th>
+			<th>Ações</th>
+		</tr>
+	</thead>
+	<tbody>
+	<% for (ComodoComposto comodoComposto : comodoCompostos) { %>
+		<tr>
+			<td><%= comodoComposto.obterId() %></td>
+			<td><%= comodoComposto.obterDescricao() %></td>
+			<td>
+				<a href="alterar?id=<%= comodoComposto.obterId() %>">
+					Editar
+				</a>&nbsp; 
+				<a href="remover?id=<%= comodoComposto.obterId() %>">
+					Remover
+				</a> 
+			</td>
+		</tr>
+	<% } %>
+	</tbody>
 </table>
+
+<a href="criar">Criar</a>
 
 </body>
 </html>

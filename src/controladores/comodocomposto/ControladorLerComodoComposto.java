@@ -1,7 +1,6 @@
 package controladores.comodocomposto;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
@@ -11,8 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import entidades.Ambiente;
 import entidades.ComodoComposto;
+import persistencia.ComodoCompostoBanco;
 
 /**
  * Servlet implementation class ControladorLerComodoComposto
@@ -25,25 +24,17 @@ public class ControladorLerComodoComposto extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		int id = Integer.parseInt(request.getParameter("id"));
+List<ComodoComposto> comodoCompostos = null;
 		
-		// TODO logica do banco
-		List<ComodoComposto> comodosCompostos = new ArrayList<>();
-		
-		comodosCompostos.add(new ComodoComposto("Suite"));
-		comodosCompostos.add(new ComodoComposto("Sala de estudos"));
-		comodosCompostos.add(new ComodoComposto("Cozinha americana"));
-		
-		ComodoComposto comodoComposto;
-		
-		try {
-			comodoComposto = comodosCompostos.get(id);
-			request.setAttribute("comodoComposto", comodoComposto);
-		} catch (IndexOutOfBoundsException e) {
-			request.setAttribute("comodoComposto", null);
+		try (ComodoCompostoBanco bd = new ComodoCompostoBanco()) {
+			comodoCompostos = bd.get();
+		} catch (Exception e) {
+			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+			e.printStackTrace(response.getWriter());
+			return;
 		}
 		
-		request.setAttribute("id", id);
+		request.setAttribute("comodoCompostos", comodoCompostos);
 		
 		RequestDispatcher rd = request.getRequestDispatcher("../FronteiraLerComodoComposto.jsp");
 		rd.forward(request, response);

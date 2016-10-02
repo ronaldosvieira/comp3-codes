@@ -10,6 +10,10 @@ public class ComodoComposto extends Comodo {
 		super(descricao);
 	}
 	
+	public ComodoComposto(int id, String descricao) {
+		super(id, descricao);
+	}
+	
 	@Override
 	List<Mobilia> listaMobiliaDisponivel() {
 		List<Mobilia> mobilias = new ArrayList<>();
