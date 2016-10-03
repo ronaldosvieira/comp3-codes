@@ -42,7 +42,7 @@ public class ControladorCriarCozinha extends HttpServlet {
 			e.printStackTrace(response.getWriter());
 		}
 		
-		response.sendRedirect("../cozinha/ler");
+		response.sendRedirect("ler");
 	}
 
 }

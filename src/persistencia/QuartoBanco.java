@@ -87,6 +87,8 @@ public class QuartoBanco implements AutoCloseable {
 				stmt2.setInt(1, id);
 				
 				stmt2.executeUpdate();
+				
+				return id;
 			}
 		} catch (Exception e) {
 			throw new SQLException("Erro ao inserir quarto.");

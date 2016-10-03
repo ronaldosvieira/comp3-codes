@@ -8,18 +8,23 @@
 </head>
 <body>
 
+<%@ page import = "entidades.Mobilia" %>
+
+<% Mobilia mobilia = 
+	(Mobilia) request.getAttribute("mobilia"); %>
+
 <form method="post" action="./alterar">
 	<h2>Alterar Mobília</h2>
 	<input type="hidden" name="id" value="<%= request.getAttribute("id") %>">
 	
 	<input type="text" name="descricao" placeholder="Descrição" 
-		value="<%= request.getAttribute("descricao") %>">
+		value="<%= mobilia.obterDescricao() %>">
 	<br>
 	<input type="number" name="custo" step=0.01 placeholder="Custo (R$)" 
-		value="<%= request.getAttribute("custo") %>">
+		value="<%= mobilia.obterCusto() %>">
 	<br>
-	<input type="number" name="tempoEntrega" placeholder="Tempo de Entrega (dias)" 
-		value="<%= request.getAttribute("tempoEntrega") %>">
+	<input type="number" name="tempoEntrega" placeholder="Tempo de Entrega (semanas)" 
+		value="<%= mobilia.obterTempoEntrega() %>">
 	<br>
 	<button type="submit">Enviar</button>
 	<a href="ler">Voltar</a>

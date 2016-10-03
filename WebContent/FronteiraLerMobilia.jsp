@@ -11,26 +11,42 @@
 <h2>Ler Mobília</h2>
 
 <%@ page import = "entidades.Mobilia" %>
-<% Mobilia mobilia = (Mobilia) request.getAttribute("mobilia"); %>
+<%@ page import = "java.util.List" %>
+
+<% List<Mobilia> mobilias = 
+	(List<Mobilia>) request.getAttribute("mobilias"); %>
 
 <table>
-	<tr>
-		<th align="right">Id</th>
-		<td><%= request.getAttribute("id") %></td>
-	</tr>
-	<tr>
-		<th align="right">Descrição</th>
-		<td><%= mobilia.obterDescricao() %></td>
-	</tr>
-	<tr>
-		<th align="right">Custo (R$)</th>
-		<td><%= mobilia.obterCusto() %></td>
-	</tr>
-	<tr>
-		<th align="right">Tempo de entrega (em dias)</th>
-		<td><%= mobilia.obterTempoEntrega() %></td>
-	</tr>
+	<thead>
+		<tr>
+			<th>Id</th>
+			<th>Descrição</th>
+			<th>Custo (R$)</th>
+			<th>Tempo de entrega (semanas)</th>
+			<th>Ações</th>
+		</tr>
+	</thead>
+	<tbody>
+	<% for (Mobilia mobilia : mobilias) { %>
+		<tr>
+			<td><%= mobilia.obterId() %></td>
+			<td><%= mobilia.obterDescricao() %></td>
+			<td><%= mobilia.obterCusto() %></td>
+			<td><%= mobilia.obterTempoEntrega() %></td>
+			<td>
+				<a href="alterar?id=<%= mobilia.obterId() %>">
+					Editar
+				</a>&nbsp; 
+				<a href="remover?id=<%= mobilia.obterId() %>">
+					Remover
+				</a> 
+			</td>
+		</tr>
+	<% } %>
+	</tbody>
 </table>
+
+<a href="criar">Criar</a>
 
 </body>
 </html>

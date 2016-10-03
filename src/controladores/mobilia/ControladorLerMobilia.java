@@ -1,7 +1,6 @@
 package controladores.mobilia;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
@@ -12,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import entidades.Mobilia;
+import persistencia.MobiliaBanco;
 
 /**
  * Servlet implementation class ControladorLerMobilia
@@ -24,25 +24,17 @@ public class ControladorLerMobilia extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		int id = Integer.parseInt(request.getParameter("id"));
+		List<Mobilia> mobilias = null;
 		
-		// TODO logica do banco
-		List<Mobilia> mobilias = new ArrayList<>();
-		
-		mobilias.add(new Mobilia("Cadeira Maneira de Madeira", 100.0f, 10));
-		mobilias.add(new Mobilia("Cadeira Roxa Louca", 120.0f, 10));
-		mobilias.add(new Mobilia("Cadeira do Wesley Safadão", 500.0f, 20));
-		
-		Mobilia mobilia;
-		
-		try {
-			mobilia = mobilias.get(id);
-			request.setAttribute("mobilia", mobilia);
-		} catch (IndexOutOfBoundsException e) {
-			request.setAttribute("mobilia", null);
+		try (MobiliaBanco bd = new MobiliaBanco()) {
+			mobilias = bd.get();
+		} catch (Exception e) {
+			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+			e.printStackTrace(response.getWriter());
+			return;
 		}
 		
-		request.setAttribute("id", id);
+		request.setAttribute("mobilias", mobilias);
 		
 		RequestDispatcher rd = request.getRequestDispatcher("../FronteiraLerMobilia.jsp");
 		rd.forward(request, response);

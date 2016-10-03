@@ -42,7 +42,7 @@ public class ControladorCriarQuarto extends HttpServlet {
 			e.printStackTrace(response.getWriter());
 		}
 		
-		response.sendRedirect("../quarto/ler");
+		response.sendRedirect("ler");
 	}
 
 }

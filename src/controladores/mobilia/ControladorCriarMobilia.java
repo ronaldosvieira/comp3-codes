@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import entidades.Mobilia;
+import persistencia.MobiliaBanco;
+
 /**
  * Servlet implementation class ControladorCriarMobilia
  */
@@ -29,12 +32,19 @@ public class ControladorCriarMobilia extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String descricao = request.getParameter("descricao");
-		float custo = Float.parseFloat(request.getParameter("custo"));
+		Float custo = Float.parseFloat(request.getParameter("custo"));
 		int tempoEntrega = Integer.parseInt(request.getParameter("tempoEntrega"));
 		
-		// TODO inserir mobilia
+		Mobilia mobilia = new Mobilia(descricao, custo, tempoEntrega);
 		
-		response.sendRedirect("../FronteiraLerMobilia.jsp");
+		try (MobiliaBanco bd = new MobiliaBanco()) {
+			bd.insert(mobilia);
+		} catch (Exception e) {
+			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+			e.printStackTrace(response.getWriter());
+		}
+		
+		response.sendRedirect("ler");
 	}
 
 }

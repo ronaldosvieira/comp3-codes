@@ -42,7 +42,7 @@ public class ControladorCriarSala extends HttpServlet {
 			e.printStackTrace(response.getWriter());
 		}
 		
-		response.sendRedirect("../sala/ler");
+		response.sendRedirect("ler");
 	}
 
 }
