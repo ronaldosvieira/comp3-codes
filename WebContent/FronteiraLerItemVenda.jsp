@@ -4,25 +4,47 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Ler ItemVenda</title>
+<title>Ler Item Venda</title>
 </head>
 <body>
 
-<h2>Ler ItemVenda</h2>
+<h2>Ler Item Venda</h2>
 
 <%@ page import = "entidades.ItemVenda" %>
-<% ItemVenda itemVenda = (ItemVenda) request.getAttribute("itemVenda"); %>
+<%@ page import = "java.util.List" %>
+
+<% List<ItemVenda> itemVendas = 
+	(List<ItemVenda>) request.getAttribute("itemVendas"); %>
 
 <table>
-	<tr>
-		<th align="right">Id</th>
-		<td><%= request.getAttribute("id") %></td>
-	</tr>
-	<tr>
-		<th align="right">Quantidade</th>
-		<td><%= itemVenda.obterQuantidade() %></td>
-	</tr>
+	<thead>
+		<tr>
+			<th>Id</th>
+			<th>Mobília</th>
+			<th>Quantidade</th>
+			<th>Ações</th>
+		</tr>
+	</thead>
+	<tbody>
+	<% for (ItemVenda itemVenda : itemVendas) { %>
+		<tr>
+			<td><%= itemVenda.obterId() %></td>
+			<td><%= itemVenda.obterMobilia() %></td>
+			<td><%= itemVenda.obterQuantidade() %></td>
+			<td>
+				<a href="alterar?id=<%= itemVenda.obterId() %>">
+					Editar
+				</a>&nbsp; 
+				<a href="remover?id=<%= itemVenda.obterId() %>">
+					Remover
+				</a> 
+			</td>
+		</tr>
+	<% } %>
+	</tbody>
 </table>
+
+<a href="criar">Criar</a>
 
 </body>
 </html>

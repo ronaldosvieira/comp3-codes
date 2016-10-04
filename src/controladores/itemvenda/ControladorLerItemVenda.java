@@ -12,11 +12,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import entidades.ItemVenda;
+import entidades.ItemVenda;
+import persistencia.ItemVendaBanco;
 
 /**
  * Servlet implementation class ControladorLerItemVenda
  */
-@WebServlet("/itemVenda/ler")
+@WebServlet("/itemvenda/ler")
 public class ControladorLerItemVenda extends HttpServlet {
 	private static final long serialVersionUID = 1L;
  
@@ -24,25 +26,17 @@ public class ControladorLerItemVenda extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		int id = Integer.parseInt(request.getParameter("id"));
+		List<ItemVenda> itemVendas = null;
 		
-		// TODO logica do banco
-		List<ItemVenda> itemVendas = new ArrayList<>();
-		
-		itemVendas.add(new ItemVenda(15));
-		itemVendas.add(new ItemVenda(8));
-		itemVendas.add(new ItemVenda(10));
-		
-		ItemVenda itemVenda;
-		
-		try {
-			itemVenda = itemVendas.get(id);
-			request.setAttribute("itemVenda", itemVenda);
-		} catch (IndexOutOfBoundsException e) {
-			request.setAttribute("itemVenda", null);
+		try (ItemVendaBanco bd = new ItemVendaBanco()) {
+			itemVendas = bd.get();
+		} catch (Exception e) {
+			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+			e.printStackTrace(response.getWriter());
+			return;
 		}
 		
-		request.setAttribute("id", id);
+		request.setAttribute("itemVendas", itemVendas);
 		
 		RequestDispatcher rd = request.getRequestDispatcher("../FronteiraLerItemVenda.jsp");
 		rd.forward(request, response);

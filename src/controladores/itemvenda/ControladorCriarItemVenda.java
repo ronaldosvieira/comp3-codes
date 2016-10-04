@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import entidades.ItemVenda;
+import persistencia.ItemVendaBanco;
+
 /**
  * Servlet implementation class ControladorCriarItemVenda
  */
@@ -30,9 +33,16 @@ public class ControladorCriarItemVenda extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int quantidade = Integer.parseInt(request.getParameter("quantidade"));
 		
-		// TODO inserir item venda
+		ItemVenda itemVenda = new ItemVenda(quantidade);
 		
-		response.sendRedirect("../FronteiraLerItemVenda.jsp");
+		try (ItemVendaBanco bd = new ItemVendaBanco()) {
+			int id = bd.insert(itemVenda);
+		} catch (Exception e) {
+			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+			e.printStackTrace(response.getWriter());
+		}
+		
+		response.sendRedirect("ler");
 	}
 
 }

@@ -12,11 +12,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import entidades.ItemVenda;
+import persistencia.ItemVendaBanco;
 
 /**
  * Servlet implementation class ControladorRemoverItemVenda
  */
-@WebServlet("/itemVenda/remover")
+@WebServlet("/itemvenda/remover")
 public class ControladorRemoverItemVenda extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -25,22 +26,6 @@ public class ControladorRemoverItemVenda extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int id = Integer.parseInt(request.getParameter("id"));
-		
-		// TODO logica do banco
-		List<ItemVenda> itemVendas = new ArrayList<>();
-		
-		itemVendas.add(new ItemVenda(15));
-		itemVendas.add(new ItemVenda(8));
-		itemVendas.add(new ItemVenda(10));
-		
-		ItemVenda itemVenda;
-		
-		try {
-			itemVenda = itemVendas.get(id);
-			request.setAttribute("itemVenda", itemVenda);
-		} catch (IndexOutOfBoundsException e) {
-			request.setAttribute("itemVenda", null);
-		}
 		
 		request.setAttribute("id", id);
 		
@@ -52,8 +37,17 @@ public class ControladorRemoverItemVenda extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+		int id = Integer.parseInt(request.getParameter("id"));
+
+		try (ItemVendaBanco bd = new ItemVendaBanco()) {
+			bd.remove(id);
+		} catch (Exception e) {
+			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+			e.printStackTrace(response.getWriter());
+			return;
+		}
+		
+		response.sendRedirect("ler");
 	}
 
 }

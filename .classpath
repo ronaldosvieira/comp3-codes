@@ -13,6 +13,7 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="F:/Ronaldo/Documents/eclipse/javaee-workspace/apache-tomcat-7.0.72/lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="/home/aluno/Downloads/apache-tomcat-7.0.72/lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="/home/aluno/Downloads/apache-tomcat-7.0.72/lib/h2-1.4.192.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
