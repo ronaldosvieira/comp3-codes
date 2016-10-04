@@ -3,6 +3,7 @@ package entidades;
 import java.util.List;
 
 public class Ambiente {
+	private Integer id;
 	private List<ItemVenda> itens;
 	private int numParedes;
 	private int numPortas;
@@ -12,6 +13,11 @@ public class Ambiente {
 		this.numParedes = numParedes;
 		this.numPortas = numPortas;
 		this.metragem = metragem;
+	}
+	
+	public Ambiente(int id, int numParedes, int numPortas, float metragem) {
+		this(numParedes, numPortas, metragem);
+		this.id = new Integer(id);
 	}
 	
 	public float custo() {
@@ -35,21 +41,25 @@ public class Ambiente {
 		
 		return tempo;
 	}
+	
+	public int obterId() {
+		return this.id;
+	}
 
 	public List<ItemVenda> obterItens() {
-		return itens;
+		return this.itens;
 	}
 
 	public int obterNumParedes() {
-		return numParedes;
+		return this.numParedes;
 	}
 
 	public int obterNumPortas() {
-		return numPortas;
+		return this.numPortas;
 	}
 
 	public float obterMetragem() {
-		return metragem;
+		return this.metragem;
 	}
 	
 	
