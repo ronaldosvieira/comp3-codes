@@ -11,26 +11,42 @@
 <h2>Ler Ambiente</h2>
 
 <%@ page import = "entidades.Ambiente" %>
-<% Ambiente ambiente = (Ambiente) request.getAttribute("ambiente"); %>
+<%@ page import = "java.util.List" %>
+
+<% List<Ambiente> ambientes = 
+	(List<Ambiente>) request.getAttribute("ambientes"); %>
 
 <table>
-	<tr>
-		<th align="right">Id</th>
-		<td><%= request.getAttribute("id") %></td>
-	</tr>
-	<tr>
-		<th align="right">Número de paredes</th>
-		<td><%= ambiente.obterNumParedes() %></td>
-	</tr>
-	<tr>
-		<th align="right">Número de portas</th>
-		<td><%= ambiente.obterNumPortas() %></td>
-	</tr>
-	<tr>
-		<th align="right">Metragem</th>
-		<td><%= ambiente.obterMetragem() %></td>
-	</tr>
+	<thead>
+		<tr>
+			<th>Id</th>
+			<th>Número de paredes</th>
+			<th>Número de portas</th>
+			<th>Metragem</th>
+			<th>Ações</th>
+		</tr>
+	</thead>
+	<tbody>
+	<% for (Ambiente ambiente : ambientes) { %>
+		<tr>
+			<td><%= ambiente.obterId() %></td>
+			<td><%= ambiente.obterNumParedes() %></td>
+			<td><%= ambiente.obterNumPortas() %></td>
+			<td><%= ambiente.obterMetragem() %></td>
+			<td>
+				<a href="alterar?id=<%= ambiente.obterId() %>">
+					Editar
+				</a>&nbsp; 
+				<a href="remover?id=<%= ambiente.obterId() %>">
+					Remover
+				</a> 
+			</td>
+		</tr>
+	<% } %>
+	</tbody>
 </table>
+
+<a href="criar">Criar</a>
 
 </body>
 </html>

@@ -8,19 +8,25 @@
 </head>
 <body>
 
+<%@ page import = "entidades.Ambiente" %>
+
+<% Ambiente ambiente = 
+	(Ambiente) request.getAttribute("ambiente"); %>
+
 <form method="post" action="./alterar">
 	<h2>Alterar Ambiente</h2>
+	
 	<input type="hidden" name="id" value="<%= request.getAttribute("id") %>">
 	
 	<input type="number" name="numParedes" placeholder="Núm. de paredes" 
-		value="<%= request.getAttribute("numParedes") %>">
+		value="<%= ambiente.obterNumParedes() %>">
 		<br>
 	<input type="number" name="numPortas" placeholder="Núm. de portas" 
-		value="<%= request.getAttribute("numPortas") %>">
+		value="<%= ambiente.obterNumPortas() %>">
 		<br>
 	<input type="number" name="metragem" step=0.01 placeholder="Metragem"
-		value="<%= request.getAttribute("metragem") %>">
-		<br>
+		value="<%= ambiente.obterMetragem() %>">
+	<br>
 	<button type="submit">Enviar</button>
 	<a href="ler">Voltar</a>
 </form>

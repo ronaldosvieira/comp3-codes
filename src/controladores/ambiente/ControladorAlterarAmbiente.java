@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import entidades.Ambiente;
+import persistencia.AmbienteBanco;
+
 /**
  * Servlet implementation class ControladorAlterarAmbiente
  */
@@ -20,16 +23,26 @@ public class ControladorAlterarAmbiente extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		int id = Integer.parseInt(request.getParameter("id"));
+		int id;
+		Ambiente ambiente = null;
 		
-		// TODO obter ambiente id
-		int numParedes = 0;
-		int numPortas = 0;
-		float metragem = 0.0f;
+		try {
+			id = Integer.parseInt(request.getParameter("id"));
+		} catch (NumberFormatException e) {
+			response.sendRedirect("ler");
+			return;
+		}
 		
-		request.setAttribute("numParedes", numParedes);
-		request.setAttribute("numPortas", numPortas);
-		request.setAttribute("metragem", metragem);
+		try (AmbienteBanco bd = new AmbienteBanco()) {
+			ambiente = bd.get(id);
+		} catch (Exception e) {
+			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+			e.printStackTrace(response.getWriter());
+			return;
+		}
+		
+		request.setAttribute("id", id);
+		request.setAttribute("ambiente", ambiente);
 		
 		RequestDispatcher rd = request.getRequestDispatcher("../FronteiraAlterarAmbiente.jsp");
 		rd.forward(request, response);
@@ -39,13 +52,22 @@ public class ControladorAlterarAmbiente extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int id = Integer.parseInt(request.getParameter("id"));
 		int numParedes = Integer.parseInt(request.getParameter("numParedes"));
 		int numPortas = Integer.parseInt(request.getParameter("numPortas"));
 		float metragem = Float.parseFloat(request.getParameter("metragem"));
 		
-		// TODO alterar ambiente
+		Ambiente ambiente = new Ambiente(id, numParedes, numPortas, metragem);
 		
-		response.sendRedirect("../FronteiraLerAmbiente.jsp");
+		try (AmbienteBanco bd = new AmbienteBanco()) {
+			bd.update(id, ambiente);
+		} catch (Exception e) {
+			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+			e.printStackTrace(response.getWriter());
+			return;
+		}
+		
+		response.sendRedirect("ler");
 	}
 
 }

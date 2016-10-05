@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import entidades.Ambiente;
+import entidades.Ambiente;
+import persistencia.AmbienteBanco;
 
 /**
  * Servlet implementation class ControladorLerAmbiente
@@ -24,25 +26,17 @@ public class ControladorLerAmbiente extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		int id = Integer.parseInt(request.getParameter("id"));
+		List<Ambiente> ambientes = null;
 		
-		// TODO lógica do banco
-		List<Ambiente> ambientes = new ArrayList<>();
-		
-		ambientes.add(new Ambiente(4, 1, 15.1f));
-		ambientes.add(new Ambiente(2, 2, 8.7f));
-		ambientes.add(new Ambiente(6, 2, 10.4f));
-		
-		Ambiente ambiente;
-		
-		try {
-			ambiente = ambientes.get(id);
-			request.setAttribute("ambiente", ambiente);
-		} catch (IndexOutOfBoundsException e) {
-			request.setAttribute("ambiente", null);
+		try (AmbienteBanco bd = new AmbienteBanco()) {
+			ambientes = bd.get();
+		} catch (Exception e) {
+			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+			e.printStackTrace(response.getWriter());
+			return;
 		}
 		
-		request.setAttribute("id", id);
+		request.setAttribute("ambientes", ambientes);
 		
 		RequestDispatcher rd = request.getRequestDispatcher("../FronteiraLerAmbiente.jsp");
 		rd.forward(request, response);

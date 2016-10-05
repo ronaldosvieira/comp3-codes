@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import entidades.Ambiente;
+import persistencia.AmbienteBanco;
 
 /**
  * Servlet implementation class ControladorRemoverAmbiente
@@ -26,21 +27,7 @@ public class ControladorRemoverAmbiente extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int id = Integer.parseInt(request.getParameter("id"));
 		
-		// TODO exemplos
-		List<Ambiente> ambientes = new ArrayList<>();
-		
-		ambientes.add(new Ambiente(4, 1, 15.1f));
-		ambientes.add(new Ambiente(2, 2, 8.7f));
-		ambientes.add(new Ambiente(6, 2, 10.4f));
-		
-		Ambiente ambiente;
-		
-		try {
-			ambiente = ambientes.get(id);
-			request.setAttribute("ambiente", ambiente);
-		} catch (IndexOutOfBoundsException e) {
-			request.setAttribute("ambiente", null);
-		}
+		request.setAttribute("id", id);
 		
 		RequestDispatcher rd = request.getRequestDispatcher("../FronteiraRemoverAmbiente.jsp");
 		rd.forward(request, response);
@@ -51,29 +38,16 @@ public class ControladorRemoverAmbiente extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int id = Integer.parseInt(request.getParameter("id"));
-		request.setAttribute("id", id);
-		
-		boolean remover = Boolean.parseBoolean(request.getParameter("remover"));
-		
-		if (!remover) {
-			RequestDispatcher rd = request.getRequestDispatcher("../FronteiraLerAmbiente.jsp");
-			rd.forward(request, response);
+
+		try (AmbienteBanco bd = new AmbienteBanco()) {
+			bd.remove(id);
+		} catch (Exception e) {
+			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+			e.printStackTrace(response.getWriter());
+			return;
 		}
 		
-		// TODO exemplos
-		List<Ambiente> ambientes = new ArrayList<>();
-		
-		ambientes.add(new Ambiente(4, 1, 15.1f));
-		ambientes.add(new Ambiente(2, 2, 8.7f));
-		ambientes.add(new Ambiente(6, 2, 10.4f));
-		
-		// TODO logica de remocao
-		try {
-			ambientes.remove(id);
-		} catch (IndexOutOfBoundsException e) {}
-		
-		RequestDispatcher rd = request.getRequestDispatcher("../FronteiraLerAmbiente.jsp");
-		rd.forward(request, response);
+		response.sendRedirect("ler");
 	}
 
 }

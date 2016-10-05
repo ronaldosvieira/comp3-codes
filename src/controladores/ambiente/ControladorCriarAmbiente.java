@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import entidades.Ambiente;
+import persistencia.AmbienteBanco;
+
 /**
  * Servlet implementation class ControladorCriarAmbiente
  */
@@ -32,9 +35,16 @@ public class ControladorCriarAmbiente extends HttpServlet {
 		int numPortas = Integer.parseInt(request.getParameter("numPortas"));
 		float metragem = Float.parseFloat(request.getParameter("metragem"));
 		
-		// TODO inserir ambiente
+		Ambiente ambiente = new Ambiente(numParedes, numPortas, metragem);
 		
-		response.sendRedirect("../FronteiraLerAmbiente.jsp");
+		try (AmbienteBanco bd = new AmbienteBanco()) {
+			bd.insert(ambiente);
+		} catch (Exception e) {
+			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+			e.printStackTrace(response.getWriter());
+		}
+		
+		response.sendRedirect("ler");
 	}
 
 }
