@@ -10,7 +10,7 @@ public class ItemVenda {
 	}
 	
 	public ItemVenda(int id, int quantidade) {
-		this.id = new Integer(id);
+		this.id = id;
 		this.quantidade = quantidade;
 	}
 	

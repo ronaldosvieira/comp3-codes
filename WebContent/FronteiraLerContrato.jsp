@@ -11,18 +11,38 @@
 <h2>Ler Contrato</h2>
 
 <%@ page import = "entidades.Contrato" %>
-<% Contrato contrato = (Contrato) request.getAttribute("contrato"); %>
+<%@ page import = "java.util.List" %>
+
+<% List<Contrato> contratos = 
+	(List<Contrato>) request.getAttribute("contratos"); %>
 
 <table>
-	<tr>
-		<th align="right">Id</th>
-		<td><%= request.getAttribute("id") %></td>
-	</tr>
-	<tr>
-		<th align="right">Comissão</th>
-		<td><%= contrato.obterComissao() %></td>
-	</tr>
+	<thead>
+		<tr>
+			<th>Id</th>
+			<th>Comissão</th>
+			<th>Ações</th>
+		</tr>
+	</thead>
+	<tbody>
+	<% for (Contrato contrato : contratos) { %>
+		<tr>
+			<td><%= contrato.obterId() %></td>
+			<td><%= contrato.obterComissao() %></td>
+			<td>
+				<a href="alterar?id=<%= contrato.obterId() %>">
+					Editar
+				</a>&nbsp; 
+				<a href="remover?id=<%= contrato.obterId() %>">
+					Remover
+				</a> 
+			</td>
+		</tr>
+	<% } %>
+	</tbody>
 </table>
+
+<a href="criar">Criar</a>
 
 </body>
 </html>

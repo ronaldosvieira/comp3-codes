@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import entidades.Contrato;
+import persistencia.ContratoBanco;
+
 /**
  * Servlet implementation class ControladorCriarContrato
  */
@@ -28,11 +31,18 @@ public class ControladorCriarContrato extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		float comissao = Float.parseFloat(request.getParameter("comissao"));
+		Float comissao = Float.parseFloat(request.getParameter("comissao"));
 		
-		// TODO inserir contrato
+		Contrato contrato = new Contrato(comissao);
 		
-		response.sendRedirect("../FronteiraLerContrato.jsp");
+		try (ContratoBanco bd = new ContratoBanco()) {
+			bd.insert(contrato);
+		} catch (Exception e) {
+			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+			e.printStackTrace(response.getWriter());
+		}
+		
+		response.sendRedirect("ler");
 	}
 
 }

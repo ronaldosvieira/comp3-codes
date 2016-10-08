@@ -1,8 +1,6 @@
 package controladores.contrato;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -11,7 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import entidades.Contrato;
+import persistencia.ContratoBanco;
 
 /**
  * Servlet implementation class ControladorRemoverContrato
@@ -26,21 +24,7 @@ public class ControladorRemoverContrato extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int id = Integer.parseInt(request.getParameter("id"));
 		
-		// TODO exemplos
-		List<Contrato> contratos = new ArrayList<>();
-		
-		contratos.add(new Contrato(15.1f));
-		contratos.add(new Contrato(8.7f));
-		contratos.add(new Contrato(10.4f));
-		
-		Contrato contrato;
-		
-		try {
-			contrato = contratos.get(id);
-			request.setAttribute("contrato", contrato);
-		} catch (IndexOutOfBoundsException e) {
-			request.setAttribute("contrato", null);
-		}
+		request.setAttribute("id", id);
 		
 		RequestDispatcher rd = request.getRequestDispatcher("../FronteiraRemoverContrato.jsp");
 		rd.forward(request, response);
@@ -50,8 +34,17 @@ public class ControladorRemoverContrato extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+		int id = Integer.parseInt(request.getParameter("id"));
+
+		try (ContratoBanco bd = new ContratoBanco()) {
+			bd.remove(id);
+		} catch (Exception e) {
+			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+			e.printStackTrace(response.getWriter());
+			return;
+		}
+		
+		response.sendRedirect("ler");
 	}
 
 }

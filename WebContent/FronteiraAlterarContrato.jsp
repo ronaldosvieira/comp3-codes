@@ -8,12 +8,18 @@
 </head>
 <body>
 
+<%@ page import = "entidades.Contrato" %>
+
+<% Contrato contrato = 
+	(Contrato) request.getAttribute("contrato"); %>
+	
 <form method="post" action="./alterar">
 	<h2>Alterar Contrato</h2>
+	
 	<input type="hidden" name="id" value="<%= request.getAttribute("id") %>">
 	
 	<input type="number" name="comissao" step=0.01 placeholder="Comissão" 
-		value="<%= request.getAttribute("comissao") %>">
+		value="<%= contrato.obterComissao() %>">
 	<br>
 	<button type="submit">Enviar</button>
 	<a href="ler">Voltar</a>

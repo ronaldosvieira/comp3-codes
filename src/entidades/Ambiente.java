@@ -17,7 +17,7 @@ public class Ambiente {
 	
 	public Ambiente(int id, int numParedes, int numPortas, float metragem) {
 		this(numParedes, numPortas, metragem);
-		this.id = new Integer(id);
+		this.id = id;
 	}
 	
 	public float custo() {

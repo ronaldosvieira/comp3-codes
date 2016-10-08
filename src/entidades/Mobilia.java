@@ -13,7 +13,7 @@ public class Mobilia {
 	}
 	
 	public Mobilia(int id, String descricao, float custo, int tempoEntrega) {
-		this.id = new Integer(id);
+		this.id = id;
 		this.descricao = descricao;
 		this.custo = custo;
 		this.tempoEntrega = tempoEntrega;

@@ -3,10 +3,16 @@ package entidades;
 import java.util.List;
 
 public class Contrato {
+	private Integer id;
 	private List<Ambiente> ambientes;
 	private float comissao;
 	
 	public Contrato(float comissao) {
+		this.comissao = comissao;
+	}
+	
+	public Contrato(int id, float comissao) {
+		this.id = id;
 		this.comissao = comissao;
 	}
 	
@@ -34,6 +40,9 @@ public class Contrato {
 		return prazoMax;
 	}
 	
+	public int obterId() {
+		return this.id;
+	}
 
 	public float obterComissao() {
 		return this.comissao;

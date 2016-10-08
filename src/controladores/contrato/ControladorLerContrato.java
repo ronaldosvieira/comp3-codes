@@ -1,7 +1,6 @@
 package controladores.contrato;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
@@ -12,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import entidades.Contrato;
+import persistencia.ContratoBanco;
 
 /**
  * Servlet implementation class ControladorLerContrato
@@ -24,25 +24,17 @@ public class ControladorLerContrato extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		int id = Integer.parseInt(request.getParameter("id"));
+		List<Contrato> contratos = null;
 		
-		// TODO logica do banco
-		List<Contrato> contratos = new ArrayList<>();
-		
-		contratos.add(new Contrato(15.1f));
-		contratos.add(new Contrato(8.7f));
-		contratos.add(new Contrato(10.4f));
-		
-		Contrato contrato;
-		
-		try {
-			contrato = contratos.get(id);
-			request.setAttribute("contrato", contrato);
-		} catch (IndexOutOfBoundsException e) {
-			request.setAttribute("contrato", null);
+		try (ContratoBanco bd = new ContratoBanco()) {
+			contratos = bd.get();
+		} catch (Exception e) {
+			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+			e.printStackTrace(response.getWriter());
+			return;
 		}
 		
-		request.setAttribute("id", id);
+		request.setAttribute("contratos", contratos);
 		
 		RequestDispatcher rd = request.getRequestDispatcher("../FronteiraLerContrato.jsp");
 		rd.forward(request, response);

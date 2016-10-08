@@ -12,7 +12,7 @@ public abstract class Comodo {
 	}
 	
 	public Comodo(int id, String descricao) {
-		this.id = new Integer(id);
+		this.id = id;
 		this.descricao = descricao;
 	}
 	
