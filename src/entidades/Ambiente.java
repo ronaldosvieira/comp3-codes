@@ -23,10 +23,14 @@ public class Ambiente {
 	public float custo() {
 		float custo = 0.0f;
 		
-		for (ItemVenda itemVenda : itens) {
+		for (ItemVenda itemVenda : this.itens) {
 			custo += itemVenda.obterMobilia().obterCusto() *
 					itemVenda.obterQuantidade();
 		}
+		
+		custo += 10 * this.numParedes;
+		custo += 5 * this.numPortas;
+		custo += 2.5 * this.metragem;
 		
 		return custo;
 	}
@@ -34,10 +38,13 @@ public class Ambiente {
 	public int tempoEntrega() {
 		int tempo = 0;
 		
-		for (ItemVenda itemVenda : itens) {
-			tempo += itemVenda.obterMobilia().obterCusto() *
-					itemVenda.obterQuantidade();
+		for (ItemVenda itemVenda : this.itens) {
+			if (itemVenda.obterMobilia().obterTempoEntrega() > tempo)
+				tempo = itemVenda.obterMobilia().obterTempoEntrega();
 		}
+		
+		tempo += 2 * this.numParedes;
+		tempo += Math.ceil(this.numPortas / 2);
 		
 		return tempo;
 	}

@@ -17,6 +17,8 @@ public class Contrato {
 			valor += ambiente.custo();
 		}
 		
+		valor *= 1 + comissao;
+		
 		return valor;
 	}
 	
