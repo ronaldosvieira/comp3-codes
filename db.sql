@@ -1,6 +1,7 @@
 create table comodo (
 	id serial primary key,
-	descricao varchar(255) not null
+	descricao varchar(255) not null,
+	tipo varchar(255) not null
 );
 
 create table sala (
