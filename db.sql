@@ -32,10 +32,10 @@ create table mobilia (
 	tempo_entrega int not null
 );
 
-create table comodo_mobilias (
-	id serial primary key,
+create table comodo_mobilia (
 	comodo_id int not null references comodo (id),
-	mobilia_id int not null references mobilia (id)
+	mobilia_id int not null references mobilia (id),
+	primary key (comodo_id, mobilia_id)
 );
 
 create table contrato (
