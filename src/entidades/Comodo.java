@@ -42,7 +42,7 @@ public abstract class Comodo {
 		}
 	}
 	
-	abstract List<Mobilia> listaMobiliaDisponivel();
+	abstract public List<Mobilia> listaMobiliaDisponivel();
 	
 	public int obterId() {
 		return this.id;

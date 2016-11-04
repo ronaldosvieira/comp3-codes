@@ -13,7 +13,7 @@ public class Cozinha extends Comodo {
 	}
 
 	@Override
-	List<Mobilia> listaMobiliaDisponivel() {
+	public List<Mobilia> listaMobiliaDisponivel() {
 		return this.mobiliasDisponiveis;
 	}
 

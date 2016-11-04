@@ -15,7 +15,7 @@ public class ComodoComposto extends Comodo {
 	}
 	
 	@Override
-	List<Mobilia> listaMobiliaDisponivel() {
+	public List<Mobilia> listaMobiliaDisponivel() {
 		List<Mobilia> mobilias = new ArrayList<>();
 		
 		for (Comodo comodo : comodos) {

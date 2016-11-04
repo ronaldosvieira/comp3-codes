@@ -13,7 +13,7 @@ public class Sala extends Comodo {
 	}
 
 	@Override
-	List<Mobilia> listaMobiliaDisponivel() {
+	public List<Mobilia> listaMobiliaDisponivel() {
 		return this.mobiliasDisponiveis;
 	}
 
