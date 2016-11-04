@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import entidades.Comodo;
+import entidades.Mobilia;
 
 public class ComodoBanco implements AutoCloseable {
 	Connection conn;
@@ -25,18 +26,40 @@ public class ComodoBanco implements AutoCloseable {
 	}
 
 	public List<Comodo> get() throws SQLException {
-		String sql = "select * " + "from comodo " + "join comodo on id = comodo_id";
+		String sql1 = "select * from comodo";
+		String sql2 = "select m.* from mobilia m " + 
+				"join comodo_mobilia cm on cm.mobilia_id = m.id " + 
+				"where cm.comodo_id = ?";
 		ResultSet rs = null;
+		ResultSet rs2 = null;
 
-		PreparedStatement stmt = conn.prepareStatement(sql);
+		PreparedStatement stmt1 = conn.prepareStatement(sql1);
+		PreparedStatement stmt2 = conn.prepareStatement(sql2);
 
-		if (stmt.execute())
-			rs = stmt.getResultSet();
+		if (stmt1.execute())
+			rs = stmt1.getResultSet();
 
 		List<Comodo> results = new ArrayList<>();
 
 		while (rs.next()) {
-			results.add(new Comodo(rs.getInt("id"), rs.getString("descricao")));
+			List<Mobilia> mobilias = new ArrayList<>();
+			
+			stmt2.setInt(1, rs.getInt("id"));
+			
+			if (stmt2.execute()) rs2 = stmt2.getResultSet();
+			
+			while (rs2.next()) {
+				mobilias.add(new Mobilia(
+						rs2.getString("descricao"), 
+						rs2.getFloat("custo"), 
+						rs2.getInt("tempo_entrega")));
+			}
+			
+			results.add(Comodo.create(
+					rs.getInt("id"), 
+					rs.getString("descricao"), 
+					rs.getString("tipo"),
+					mobilias));
 		}
 
 		return results;
