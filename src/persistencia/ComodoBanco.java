@@ -66,21 +66,41 @@ public class ComodoBanco implements AutoCloseable {
 	}
 
 	public Comodo get(int id) throws SQLException, IndexOutOfBoundsException {
-		String sql = "select * " + "from comodo " + "join comodo on id = comodo_id " + "where id = ?";
+		String sql1 = "select * from comodo where id = ?";
+		String sql2 = "select m.* from mobilia " + 
+				"join comodo_mobilia cm on cm.mobilia_id = m.id " +
+				"where cm.comodo_id = ?";
 		ResultSet rs = null;
+		ResultSet rs2 = null;
 		Comodo comodo = null;
+		List<Mobilia> mobilias = new ArrayList<>();
 
-		PreparedStatement stmt = conn.prepareStatement(sql);
-		stmt.setInt(1, id);
+		PreparedStatement stmt1 = conn.prepareStatement(sql1);
+		PreparedStatement stmt2 = conn.prepareStatement(sql2);
+		
+		stmt1.setInt(1, id);
 
-		if (stmt.execute())
-			rs = stmt.getResultSet();
-		else {
-			throw new IndexOutOfBoundsException();
-		}
+		if (stmt1.execute())
+			rs = stmt1.getResultSet();
+		else throw new IndexOutOfBoundsException();
 
 		if (rs.next()) {
-			comodo = new Comodo(rs.getInt("id"), rs.getString("descricao"));
+			stmt2.setInt(1, rs.getInt("id"));
+			
+			if (stmt2.execute()) rs2 = stmt2.getResultSet();
+			
+			while (rs2.next()) {
+				mobilias.add(new Mobilia(
+						rs2.getString("descricao"), 
+						rs2.getFloat("custo"), 
+						rs2.getInt("tempo_entrega")));
+			}
+			
+			comodo = Comodo.create(
+					rs.getInt("id"),
+					rs.getString("descricao"),
+					rs.getString("tipo"),
+					mobilias);
 		} else {
 			throw new IndexOutOfBoundsException();
 		}
