@@ -6,12 +6,12 @@ import java.util.List;
 public class ComodoComposto extends Comodo {
 	private List<Comodo> comodos;
 	
-	public ComodoComposto(String descricao) {
-		super(descricao);
+	public ComodoComposto(String descricao, List<Mobilia> mobilias) {
+		super(descricao, "comodo_composto", mobilias);
 	}
 	
-	public ComodoComposto(int id, String descricao) {
-		super(id, descricao);
+	public ComodoComposto(int id, String descricao, List<Mobilia> mobilias) {
+		super(id, descricao, "comodo_composto", mobilias);
 	}
 	
 	@Override
