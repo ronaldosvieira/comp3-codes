@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import entidades.Sala;
-import persistencia.SalaBanco;
+import persistencia.ComodoBanco;
 
 /**
  * Servlet implementation class ControladorCriarSala
@@ -35,7 +35,7 @@ public class ControladorCriarSala extends HttpServlet {
 		
 		Sala sala = new Sala(descricao);
 		
-		try (SalaBanco bd = new SalaBanco()) {
+		try (ComodoBanco bd = new ComodoBanco()) {
 			bd.insert(sala);
 		} catch (Exception e) {
 			response.getWriter().append("Erro ao acessar o banco de dados: \n");

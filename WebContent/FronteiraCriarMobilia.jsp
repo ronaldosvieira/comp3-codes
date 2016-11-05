@@ -8,11 +8,28 @@
 </head>
 <body>
 
+<%@ page import = "entidades.Comodo" %>
+<%@ page import = "java.util.List" %>
+
+<% List<Comodo> comodos = 
+	(List<Comodo>) request.getAttribute("comodos"); %>
+
 <form method="post" action="./criar">
 	<h2>Criar Mobília</h2>
 	<input type="text" name="descricao" placeholder="Descrição"><br>
 	<input type="number" name="custo" step=0.01 placeholder="Custo (R$)"><br>
 	<input type="number" name="tempoEntrega" placeholder="Tempo de Entrega (semanas)"><br>
+	
+	<label for="comodos">Comodos</label>
+	<select name="comodos" multiple>
+		<% for (Comodo comodo : comodos) { %>
+			<option value="<%= comodo.obterId() %>">
+				<%= comodo.obterDescricao() %>
+			</option>
+		<% } %>
+	</select>
+	<br><br>
+
 	<button type="submit">Enviar</button>
 </form>
 
