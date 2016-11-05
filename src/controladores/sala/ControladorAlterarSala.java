@@ -10,9 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import entidades.Sala;
-import entidades.Sala;
-import persistencia.SalaBanco;
-import persistencia.SalaBanco;
+import persistencia.ComodoBanco;
 
 /**
  * Servlet implementation class ControladorAlterarSala
@@ -35,8 +33,8 @@ public class ControladorAlterarSala extends HttpServlet {
 			return;
 		}
 		
-		try (SalaBanco bd = new SalaBanco()) {
-			sala = bd.get(id);
+		try (ComodoBanco bd = new ComodoBanco()) {
+			sala = (Sala) bd.get(id);
 		} catch (Exception e) {
 			response.getWriter().append("Erro ao acessar o banco de dados: \n");
 			e.printStackTrace(response.getWriter());
@@ -57,9 +55,13 @@ public class ControladorAlterarSala extends HttpServlet {
 		int id = Integer.parseInt(request.getParameter("id"));
 		String descricao = request.getParameter("descricao");
 		
-		Sala sala = new Sala(id, descricao);
+		Sala sala = null;
 		
-		try (SalaBanco bd = new SalaBanco()) {
+		try (ComodoBanco bd = new ComodoBanco()) {
+			sala = (Sala) bd.get(id);
+			
+			sala.alterarDescricao(descricao);
+			
 			bd.update(id, sala);
 		} catch (Exception e) {
 			response.getWriter().append("Erro ao acessar o banco de dados: \n");

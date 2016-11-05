@@ -27,7 +27,7 @@ public class ControladorLerSala extends HttpServlet {
 		List<Comodo> salas = null;
 		
 		try (ComodoBanco bd = new ComodoBanco()) {
-			salas = bd.get();
+			salas = bd.get("sala");
 		} catch (Exception e) {
 			response.getWriter().append("Erro ao acessar o banco de dados: \n");
 			e.printStackTrace(response.getWriter());
