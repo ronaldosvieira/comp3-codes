@@ -62,4 +62,8 @@ public abstract class Comodo {
 	public String obterTipo() {
 		return this.tipo;
 	}
+	
+	public void alterarDescricao(String descricao) {
+		this.descricao = descricao;
+	}
 }

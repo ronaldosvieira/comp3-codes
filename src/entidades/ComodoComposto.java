@@ -29,4 +29,7 @@ public class ComodoComposto extends Comodo {
 		return this.comodos;
 	}
 
+	public void alterarComodos(List<Comodo> comodos) {
+		this.comodos = comodos;
+	}
 }
