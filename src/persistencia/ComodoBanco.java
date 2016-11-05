@@ -10,7 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import entidades.Comodo;
+import entidades.ComodoComposto;
 import entidades.Mobilia;
+import entidades.Sala;
 
 public class ComodoBanco implements AutoCloseable {
 	Connection conn;
@@ -25,16 +27,20 @@ public class ComodoBanco implements AutoCloseable {
 		conn = DriverManager.getConnection(url, user, pass);
 	}
 
-	public List<Comodo> get() throws SQLException {
+	public List<Comodo> get(String tipo) throws SQLException {
 		String sql1 = "select * from comodo";
-		String sql2 = "select m.* from mobilia m " + 
-				"join comodo_mobilia cm on cm.mobilia_id = m.id " + 
-				"where cm.comodo_id = ?";
+		if (tipo != null) sql1 += " where tipo = '" + tipo + "'";
+		String sql2 = "select m.* from mobilia m " + "join comodo_mobilia cm on cm.mobilia_id = m.id "
+				+ "where cm.comodo_id = ?";
+		String sqlCC = "select * from comodo_composto_comodo ccc "
+				+ "join comodo_composto cc on ccc.comodo_composto_id = cc.comodo_id " + "where cc.comodo_id = ?";
 		ResultSet rs = null;
 		ResultSet rs2 = null;
+		ResultSet rsCC = null;
 
 		PreparedStatement stmt1 = conn.prepareStatement(sql1);
 		PreparedStatement stmt2 = conn.prepareStatement(sql2);
+		PreparedStatement stmtCC = conn.prepareStatement(sqlCC);
 
 		if (stmt1.execute())
 			rs = stmt1.getResultSet();
@@ -43,33 +49,48 @@ public class ComodoBanco implements AutoCloseable {
 
 		while (rs.next()) {
 			List<Mobilia> mobilias = new ArrayList<>();
-			
+
 			stmt2.setInt(1, rs.getInt("id"));
-			
-			if (stmt2.execute()) rs2 = stmt2.getResultSet();
-			
+
+			if (stmt2.execute())
+				rs2 = stmt2.getResultSet();
+
 			while (rs2.next()) {
-				mobilias.add(new Mobilia(
-						rs2.getString("descricao"), 
-						rs2.getFloat("custo"), 
-						rs2.getInt("tempo_entrega")));
+				mobilias.add(
+						new Mobilia(rs2.getString("descricao"), rs2.getFloat("custo"), rs2.getInt("tempo_entrega")));
 			}
-			
-			results.add(Comodo.create(
-					rs.getInt("id"), 
-					rs.getString("descricao"), 
-					rs.getString("tipo"),
-					mobilias));
+
+			Comodo comodo = Comodo.create(rs.getInt("id"), rs.getString("descricao"), rs.getString("tipo"), mobilias);
+
+			if (comodo.obterTipo().equals("comodo_composto")) {
+				List<Comodo> comodos = new ArrayList<>();
+
+				stmtCC.setInt(1, rs.getInt("id"));
+
+				if (stmtCC.execute())
+					rsCC = stmtCC.getResultSet();
+
+				while (rsCC.next()) {
+					comodos.add(this.get(rsCC.getInt("comodo_id")));
+				}
+
+				((ComodoComposto) comodo).alterarComodos(comodos);
+			}
+
+			results.add(comodo);
 		}
 
 		return results;
 	}
 
+	public List<Comodo> get() throws SQLException {
+		return this.get(null);
+	}
+
 	public Comodo get(int id) throws SQLException, IndexOutOfBoundsException {
 		String sql1 = "select * from comodo where id = ?";
-		String sql2 = "select m.* from mobilia " + 
-				"join comodo_mobilia cm on cm.mobilia_id = m.id " +
-				"where cm.comodo_id = ?";
+		String sql2 = "select m.* from mobilia m " + "join comodo_mobilia cm on cm.mobilia_id = m.id "
+				+ "where cm.comodo_id = ?";
 		ResultSet rs = null;
 		ResultSet rs2 = null;
 		Comodo comodo = null;
@@ -77,30 +98,26 @@ public class ComodoBanco implements AutoCloseable {
 
 		PreparedStatement stmt1 = conn.prepareStatement(sql1);
 		PreparedStatement stmt2 = conn.prepareStatement(sql2);
-		
+
 		stmt1.setInt(1, id);
 
 		if (stmt1.execute())
 			rs = stmt1.getResultSet();
-		else throw new IndexOutOfBoundsException();
+		else
+			throw new IndexOutOfBoundsException();
 
 		if (rs.next()) {
 			stmt2.setInt(1, rs.getInt("id"));
-			
-			if (stmt2.execute()) rs2 = stmt2.getResultSet();
-			
+
+			if (stmt2.execute())
+				rs2 = stmt2.getResultSet();
+
 			while (rs2.next()) {
-				mobilias.add(new Mobilia(
-						rs2.getString("descricao"), 
-						rs2.getFloat("custo"), 
-						rs2.getInt("tempo_entrega")));
+				mobilias.add(
+						new Mobilia(rs2.getString("descricao"), rs2.getFloat("custo"), rs2.getInt("tempo_entrega")));
 			}
-			
-			comodo = Comodo.create(
-					rs.getInt("id"),
-					rs.getString("descricao"),
-					rs.getString("tipo"),
-					mobilias);
+
+			comodo = Comodo.create(rs.getInt("id"), rs.getString("descricao"), rs.getString("tipo"), mobilias);
 		} else {
 			throw new IndexOutOfBoundsException();
 		}
@@ -110,7 +127,7 @@ public class ComodoBanco implements AutoCloseable {
 
 	public int insert(Comodo comodo) throws SQLException {
 		String sql1 = "insert into comodo (descricao, tipo) values (?, ?)";
-		String sql2 = "insert into ? (comodo_id) values (?)";
+		String sql2 = "insert into " + comodo.obterTipo() + " (comodo_id) values (?)";
 		String sql3 = "insert into comodo_mobilia (comodo_id, mobilia_id) values (?, ?)";
 
 		PreparedStatement stmt = conn.prepareStatement(sql1, Statement.RETURN_GENERATED_KEYS);
@@ -124,17 +141,16 @@ public class ComodoBanco implements AutoCloseable {
 				int id = generatedKeys.getInt(1);
 
 				PreparedStatement stmt2 = conn.prepareStatement(sql2);
-				stmt2.setString(1, comodo.obterTipo());
-				stmt2.setInt(2, id);
+				stmt2.setInt(1, id);
 
 				stmt2.executeUpdate();
-				
+
 				PreparedStatement stmt3 = conn.prepareStatement(sql3);
-				
+
 				for (Mobilia mobilia : comodo.listaMobiliaDisponivel()) {
 					stmt3.setInt(1, id);
 					stmt3.setInt(2, mobilia.obterId());
-					
+
 					stmt3.executeUpdate();
 				}
 
@@ -158,35 +174,35 @@ public class ComodoBanco implements AutoCloseable {
 		stmt.setInt(2, id);
 
 		stmt.executeUpdate();
-		
+
 		PreparedStatement stmt2 = conn.prepareStatement(sql2);
 		stmt2.setInt(1, id);
-		
+
 		PreparedStatement stmtInsert = conn.prepareStatement(sqlInsert);
 		PreparedStatement stmtRemove = conn.prepareStatement(sqlRemove);
-		
+
 		ResultSet rs2 = null;
 		List<Integer> mobiliaIds = new ArrayList<>();
-		
+
 		if (stmt2.execute()) {
 			rs2 = stmt2.getResultSet();
 		}
-		
+
 		// obtem lista de mobilias associadas atualmente
 		while (rs2.next()) {
 			mobiliaIds.add(rs2.getInt("mobilia_id"));
 		}
-		
+
 		// associa as mobilias necessarias
 		for (Mobilia mobilia : comodo.listaMobiliaDisponivel()) {
 			if (!mobiliaIds.contains(mobilia.obterId())) {
 				stmtInsert.setInt(1, comodo.obterId());
 				stmtInsert.setInt(2, mobilia.obterId());
-				
+
 				stmtInsert.executeUpdate();
 			}
 		}
-		
+
 		// desassocia as mobilias necessarias
 		for (int mobiliaId : mobiliaIds) {
 			if (!comodo.listaMobiliaDisponivel().contains(mobiliaId)) {
@@ -197,32 +213,31 @@ public class ComodoBanco implements AutoCloseable {
 	}
 
 	public void remove(int id) throws SQLException, IndexOutOfBoundsException {
+		Comodo comodo = this.get(id);
+
 		String sql1 = "delete from comodo_mobilia where comodo_id = ?";
 		String sqlCC = "delete from comodo_composto_comodo where comodo_composto_id = ?";
-		String sql2 = "delete from ? where comodo_id = ?";
-		String sql3 = "delete from comodo where comodo_id = ?";
+		String sql2 = "delete from " + comodo.obterTipo() + " where comodo_id = ?";
+		String sql3 = "delete from comodo where id = ?";
 
-		Comodo comodo = this.get(id);
-		
 		if (comodo.obterTipo().equals("comodo_composto")) {
 			PreparedStatement stmtCC = conn.prepareStatement(sqlCC);
 			stmtCC.setInt(1, comodo.obterId());
 		}
-		
+
 		PreparedStatement stmt = conn.prepareStatement(sql1);
 		stmt.setInt(1, id);
 
 		stmt.executeUpdate();
-		
+
 		PreparedStatement stmt2 = conn.prepareStatement(sql2);
-		stmt2.setString(1, comodo.obterTipo());
-		stmt2.setInt(2, comodo.obterId());
-		
+		stmt2.setInt(1, comodo.obterId());
+
 		stmt2.executeUpdate();
-		
+
 		PreparedStatement stmt3 = conn.prepareStatement(sql3);
 		stmt3.setInt(1, comodo.obterId());
-		
+
 		stmt3.executeUpdate();
 
 		int affectedRows = stmt.getUpdateCount();
