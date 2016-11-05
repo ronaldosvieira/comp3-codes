@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import entidades.Quarto;
-import persistencia.QuartoBanco;
+import persistencia.ComodoBanco;
 
 /**
  * Servlet implementation class ControladorCriarQuarto
@@ -35,7 +35,7 @@ public class ControladorCriarQuarto extends HttpServlet {
 		
 		Quarto quarto = new Quarto(descricao);
 		
-		try (QuartoBanco bd = new QuartoBanco()) {
+		try (ComodoBanco bd = new ComodoBanco()) {
 			bd.insert(quarto);
 		} catch (Exception e) {
 			response.getWriter().append("Erro ao acessar o banco de dados: \n");

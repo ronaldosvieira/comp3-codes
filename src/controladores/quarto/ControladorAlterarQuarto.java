@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import entidades.Quarto;
+import persistencia.ComodoBanco;
 import persistencia.QuartoBanco;
 
 /**
@@ -33,8 +34,8 @@ public class ControladorAlterarQuarto extends HttpServlet {
 			return;
 		}
 		
-		try (QuartoBanco bd = new QuartoBanco()) {
-			quarto = bd.get(id);
+		try (ComodoBanco bd = new ComodoBanco()) {
+			quarto = (Quarto) bd.get(id);
 		} catch (Exception e) {
 			response.getWriter().append("Erro ao acessar o banco de dados: \n");
 			e.printStackTrace(response.getWriter());
@@ -54,10 +55,12 @@ public class ControladorAlterarQuarto extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int id = Integer.parseInt(request.getParameter("id"));
 		String descricao = request.getParameter("descricao");
-		
-		Quarto quarto = new Quarto(id, descricao);
-		
-		try (QuartoBanco bd = new QuartoBanco()) {
+
+		try (ComodoBanco bd = new ComodoBanco()) {
+			Quarto quarto = (Quarto) bd.get(id);
+			
+			quarto.alterarDescricao(descricao);
+			
 			bd.update(id, quarto);
 		} catch (Exception e) {
 			response.getWriter().append("Erro ao acessar o banco de dados: \n");
