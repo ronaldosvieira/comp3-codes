@@ -8,6 +8,14 @@ public class Sala extends Comodo {
 		super(descricao, "sala", mobilias);
 	}
 	
+	public Sala(String descricao) {
+		super(descricao, "sala");
+	}
+	
+	public Sala(int id, String descricao) {
+		super(id, descricao, "sala");
+	}
+	
 	public Sala(int id, String descricao, List<Mobilia> mobilias) {
 		super(id, descricao, "sala", mobilias);
 	}
