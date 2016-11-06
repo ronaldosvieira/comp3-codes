@@ -20,9 +20,9 @@
 		<tr><td><a href="sala/ler">Sala</a></td></tr>
 		<tr><td><a href="cozinha/ler">Cozinha</a></td></tr>
 		<tr><td><a href="quarto/ler">Quarto</a></td></tr>
-		<tr><td><a href="comodoComposto/ler">Comodo Composto</a></td></tr>
+		<tr><td><a href="comodocomposto/ler">Comodo Composto</a></td></tr>
 		<tr><td><a href="mobilia/ler">Mobília</a></td></tr>
-		<tr><td><a href="itemVenda/ler">ItemVenda</a></td></tr>
+		<tr><td><a href="itemvenda/ler">ItemVenda</a></td></tr>
 		<tr><td><a href="ambiente/ler">Ambiente</a></td></tr>
 		<tr><td><a href="contrato/ler">Contrato</a></td></tr>
 	</tbody>
