@@ -147,7 +147,7 @@ public class ComodoBanco implements AutoCloseable {
 	public int insert(Comodo comodo) throws SQLException {
 		String sql1 = "insert into comodo (descricao, tipo) values (?, ?)";
 		String sql2 = "insert into " + comodo.obterTipo() + " (comodo_id) values (?)";
-//		String sql3 = "insert into comodo_mobilia (comodo_id, mobilia_id) values (?, ?)";
+		String sql3 = "insert into comodo_mobilia (comodo_id, mobilia_id) values (?, ?)";
 		String sqlCC = "insert into comodo_composto_comodo (comodo_composto_id, comodo_id) values (?, ?)";
 
 		PreparedStatement stmt = conn.prepareStatement(sql1, Statement.RETURN_GENERATED_KEYS);
@@ -162,8 +162,16 @@ public class ComodoBanco implements AutoCloseable {
 
 				PreparedStatement stmt2 = conn.prepareStatement(sql2);
 				stmt2.setInt(1, id);
-
 				stmt2.executeUpdate();
+				
+				PreparedStatement stmt3 = conn.prepareStatement(sql3);
+
+				for (Mobilia mobilia : comodo.listaMobiliaDisponivel()) {
+					stmt3.setInt(1, id);
+					stmt3.setInt(2, mobilia.obterId());
+
+					stmt3.executeUpdate();
+				}
 
 				if (comodo.obterTipo().equals("comodo_composto")) {
 					PreparedStatement stmtCC = conn.prepareStatement(sqlCC);
@@ -174,17 +182,8 @@ public class ComodoBanco implements AutoCloseable {
 						
 						stmtCC.executeUpdate();
 					}
-				} /*else {
-					PreparedStatement stmt3 = conn.prepareStatement(sql3);
-	
-					for (Mobilia mobilia : comodo.listaMobiliaDisponivel()) {
-						stmt3.setInt(1, id);
-						stmt3.setInt(2, mobilia.obterId());
-	
-						stmt3.executeUpdate();
-					}
-				}*/
-
+				}
+			
 				return id;
 			}
 		} catch (Exception e) {
@@ -196,29 +195,72 @@ public class ComodoBanco implements AutoCloseable {
 
 	public void update(int id, Comodo comodo) throws SQLException {
 		String sql1 = "update comodo set descricao = ? where id = ?";
-		String sql2 = "select * from comodo_composto_comodo where comodo_composto_id = ?";
-		String sqlInsert = "insert into comodo_composto_comodo (comodo_composto_id, comodo_id) values (?, ?)";
-		String sqlRemove = "delete from comodo_composto_comodo where comodo_composto_id = ? and comodo_id = ?";
+		String sqlCC = "select * from comodo_composto_comodo where comodo_composto_id = ?";
+		String sqlInsertCC = "insert into comodo_composto_comodo (comodo_composto_id, comodo_id) values (?, ?)";
+		String sqlRemoveCC = "delete from comodo_composto_comodo where comodo_composto_id = ? and comodo_id = ?";
+		String sqlCM = "select * from comodo_mobilia where comodo_id = ?";
+		String sqlInsertCM = "insert into comodo_mobilia (comodo_id, mobilia_id) values (?, ?)";
+		String sqlRemoveCM = "delete from comodo_mobilia where comodo_id = ? and mobilia_id = ?";
 
 		PreparedStatement stmt = conn.prepareStatement(sql1);
 		stmt.setString(1, comodo.obterDescricao());
 		stmt.setInt(2, id);
 
 		stmt.executeUpdate();
+		
+		PreparedStatement stmtCM = conn.prepareStatement(sqlCM);
+		stmtCM.setInt(1, id);
+
+		PreparedStatement stmtInsertCM = conn.prepareStatement(sqlInsertCM);
+		PreparedStatement stmtRemoveCM = conn.prepareStatement(sqlRemoveCM);
+
+		ResultSet rsCM = null;
+		List<Integer> mobiliasIds = new ArrayList<>();
+
+		if (stmtCM.execute()) {
+			rsCM = stmtCM.getResultSet();
+		}
+
+		// obtem lista de mobilias associadas atualmente
+		while (rsCM.next()) {
+			mobiliasIds.add(rsCM.getInt("mobilia_id"));
+		}
+
+		// associa as mobilias necessarias
+		stmtInsertCM.setInt(1, comodo.obterId());
+		
+		for (Mobilia mobilia : comodo.listaMobiliaDisponivel()) {
+			if (!mobiliasIds.contains(mobilia.obterId())) {
+				stmtInsertCM.setInt(2, mobilia.obterId());
+
+				stmtInsertCM.executeUpdate();
+			}
+		}
+
+		// desassocia as mobilias necessarias
+		stmtRemoveCM.setInt(1, comodo.obterId());
+		
+		for (int mobiliaId : mobiliasIds) {
+			if (!comodo.listaMobiliaDisponivel().contains(this.get(mobiliaId))) {
+				stmtRemoveCM.setInt(2, mobiliaId);
+				
+				stmtRemoveCM.executeUpdate();
+			}
+		}
 
 		if (comodo.obterTipo().equals("comodo_composto")) {
 			ComodoComposto comodoComposto = (ComodoComposto) comodo;
-			PreparedStatement stmt2 = conn.prepareStatement(sql2);
-			stmt2.setInt(1, id);
+			PreparedStatement stmtCC = conn.prepareStatement(sqlCC);
+			stmtCC.setInt(1, id);
 	
-			PreparedStatement stmtInsert = conn.prepareStatement(sqlInsert);
-			PreparedStatement stmtRemove = conn.prepareStatement(sqlRemove);
+			PreparedStatement stmtInsert = conn.prepareStatement(sqlInsertCC);
+			PreparedStatement stmtRemove = conn.prepareStatement(sqlRemoveCC);
 	
 			ResultSet rs2 = null;
 			List<Integer> comodosIds = new ArrayList<>();
 	
-			if (stmt2.execute()) {
-				rs2 = stmt2.getResultSet();
+			if (stmtCC.execute()) {
+				rs2 = stmtCC.getResultSet();
 			}
 	
 			// obtem lista de comodos associados atualmente
