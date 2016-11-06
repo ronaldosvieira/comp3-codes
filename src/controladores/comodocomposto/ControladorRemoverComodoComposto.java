@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import persistencia.ComodoCompostoBanco;
+import persistencia.ComodoBanco;
 
 /**
  * Servlet implementation class ControladorRemoverComodoComposto
@@ -36,7 +36,7 @@ public class ControladorRemoverComodoComposto extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int id = Integer.parseInt(request.getParameter("id"));
 
-		try (ComodoCompostoBanco bd = new ComodoCompostoBanco()) {
+		try (ComodoBanco bd = new ComodoBanco()) {
 			bd.remove(id);
 		} catch (Exception e) {
 			response.getWriter().append("Erro ao acessar o banco de dados: \n");

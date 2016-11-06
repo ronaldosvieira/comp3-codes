@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import entidades.ComodoComposto;
-import persistencia.ComodoCompostoBanco;
+import entidades.Comodo;
+import persistencia.ComodoBanco;
 
 /**
  * Servlet implementation class ControladorLerComodoComposto
@@ -24,10 +24,10 @@ public class ControladorLerComodoComposto extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-List<ComodoComposto> comodoCompostos = null;
+		List<Comodo> comodoCompostos = null;
 		
-		try (ComodoCompostoBanco bd = new ComodoCompostoBanco()) {
-			comodoCompostos = bd.get();
+		try (ComodoBanco bd = new ComodoBanco()) {
+			comodoCompostos = bd.get("comodo_composto");
 		} catch (Exception e) {
 			response.getWriter().append("Erro ao acessar o banco de dados: \n");
 			e.printStackTrace(response.getWriter());

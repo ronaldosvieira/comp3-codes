@@ -1,6 +1,8 @@
 package controladores.comodocomposto;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -9,8 +11,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import entidades.Comodo;
 import entidades.ComodoComposto;
-import persistencia.ComodoCompostoBanco;
+import persistencia.ComodoBanco;
 
 /**
  * Servlet implementation class ControladorCriarComodoComposto
@@ -23,6 +26,17 @@ public class ControladorCriarComodoComposto extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		List<Comodo> comodos;
+		
+		try (ComodoBanco bd = new ComodoBanco()) {
+			comodos = bd.get();
+			
+			request.setAttribute("comodos", comodos);
+		} catch (Exception e) {
+			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+			e.printStackTrace(response.getWriter());
+		}
+		
 		RequestDispatcher rd = request.getRequestDispatcher("../FronteiraCriarComodoComposto.jsp");
 		rd.forward(request, response);
 	}
@@ -32,10 +46,18 @@ public class ControladorCriarComodoComposto extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String descricao = request.getParameter("descricao");
+		String[] comodosStr = request.getParameterValues("comodos");
+		List<Comodo> comodos = new ArrayList<>();
 		
-		ComodoComposto comodoComposto = new ComodoComposto(descricao);
-		
-		try (ComodoCompostoBanco bd = new ComodoCompostoBanco()) {
+		try (ComodoBanco bd = new ComodoBanco()) {
+			ComodoComposto comodoComposto = new ComodoComposto(descricao);
+			
+			for (String comodo : comodosStr) {
+				comodos.add(bd.get(Integer.parseInt(comodo)));
+			}
+			
+			comodoComposto.alterarComodos(comodos);
+			
 			bd.insert(comodoComposto);
 		} catch (Exception e) {
 			response.getWriter().append("Erro ao acessar o banco de dados: \n");

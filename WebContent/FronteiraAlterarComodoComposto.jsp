@@ -8,10 +8,14 @@
 </head>
 <body>
 
+<%@ page import = "java.util.List" %>
 <%@ page import = "entidades.ComodoComposto" %>
+<%@ page import = "entidades.Comodo" %>
 
 <% ComodoComposto comodoComposto = 
 	(ComodoComposto) request.getAttribute("comodoComposto"); %>
+<% List<Comodo> comodos = 
+	(List<Comodo>) request.getAttribute("comodos"); %>
 
 <form method="post" action="./alterar">
 	<h2>Alterar Comodo Composto</h2>
@@ -21,6 +25,18 @@
 	<input type="text" name="descricao" placeholder="Descrição" 
 		value="<%= comodoComposto.obterDescricao() %>">
 	<br>
+	
+	<label for="comodos">Comodos</label>
+	<select name="comodos" multiple required>
+		<% for (Comodo comodo : comodos) { %>
+			<option value="<%= comodo.obterId() %>" 
+			<% if (comodoComposto.obterComodos().contains(comodo)) { %> selected <% } %>>
+				<%= comodo.obterDescricao() %>
+			</option>
+		<% } %>
+	</select>
+	<br><br>
+	
 	<button type="submit">Enviar</button>
 	<a href="ler">Voltar</a>
 </form>
