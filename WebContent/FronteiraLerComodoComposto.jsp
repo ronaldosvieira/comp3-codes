@@ -10,6 +10,7 @@
 
 <h2>Ler Comodo Composto</h2>
 
+<%@ page import = "entidades.Comodo" %>
 <%@ page import = "entidades.ComodoComposto" %>
 <%@ page import = "java.util.List" %>
 
@@ -21,6 +22,7 @@
 		<tr>
 			<th>Id</th>
 			<th>Descrição</th>
+			<th>Cômodos</th>
 			<th>Ações</th>
 		</tr>
 	</thead>
@@ -29,6 +31,11 @@
 		<tr>
 			<td><%= comodoComposto.obterId() %></td>
 			<td><%= comodoComposto.obterDescricao() %></td>
+			<td>
+				<% for (Comodo comodo : comodoComposto.obterComodos()) { %>
+					<%= comodo.obterDescricao() %> <br>
+				<% } %>
+			</td>
 			<td>
 				<a href="alterar?id=<%= comodoComposto.obterId() %>">
 					Editar
@@ -42,6 +49,7 @@
 	</tbody>
 </table>
 
+<a href="..">Voltar</a>
 <a href="criar">Criar</a>
 
 </body>

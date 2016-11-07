@@ -42,6 +42,7 @@
 	</tbody>
 </table>
 
+<a href="..">Voltar</a>
 <a href="criar">Criar</a>
 
 </body>
