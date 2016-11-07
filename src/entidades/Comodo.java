@@ -51,6 +51,18 @@ public abstract class Comodo {
 	
 	abstract public List<Mobilia> listaMobiliaDisponivel();
 	
+	public void associarMobilia(Mobilia mobilia) {
+		if (!this.mobiliasDisponiveis.contains(mobilia)) {
+			this.mobiliasDisponiveis.add(mobilia);
+		}
+	}
+	
+	public void desassociarMobilia(Mobilia mobilia) {
+		if (this.mobiliasDisponiveis.contains(mobilia)) {
+			this.mobiliasDisponiveis.remove(mobilia);
+		}
+	}
+	
 	public int obterId() {
 		return this.id;
 	}

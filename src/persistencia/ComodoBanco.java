@@ -56,7 +56,11 @@ public class ComodoBanco implements AutoCloseable {
 
 			while (rs2.next()) {
 				mobilias.add(
-						new Mobilia(rs2.getString("descricao"), rs2.getFloat("custo"), rs2.getInt("tempo_entrega")));
+					new Mobilia(
+							rs2.getInt("id"),
+							rs2.getString("descricao"), 
+							rs2.getFloat("custo"), 
+							rs2.getInt("tempo_entrega")));
 			}
 
 			Comodo comodo = Comodo.create(rs.getInt("id"), rs.getString("descricao"), rs.getString("tipo"), mobilias);
@@ -118,7 +122,11 @@ public class ComodoBanco implements AutoCloseable {
 
 			while (rs2.next()) {
 				mobilias.add(
-						new Mobilia(rs2.getString("descricao"), rs2.getFloat("custo"), rs2.getInt("tempo_entrega")));
+					new Mobilia(
+						rs2.getInt("id"),
+						rs2.getString("descricao"), 
+						rs2.getFloat("custo"), 
+						rs2.getInt("tempo_entrega")));
 			}
 
 			comodo = Comodo.create(rs.getInt("id"), rs.getString("descricao"), rs.getString("tipo"), mobilias);
