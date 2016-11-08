@@ -134,7 +134,7 @@ public class ComodoBanco implements AutoCloseable {
 			if (comodo.obterTipo().equals("comodo_composto")) {
 				List<Comodo> comodos = new ArrayList<>();
 
-				stmtCC.setInt(1, rs.getInt("id"));
+				stmtCC.setInt(1, comodo.obterId());
 
 				if (stmtCC.execute())
 					rsCC = stmtCC.getResultSet();
@@ -179,16 +179,18 @@ public class ComodoBanco implements AutoCloseable {
 					stmt3.setInt(2, mobilia.obterId());
 
 					stmt3.executeUpdate();
+					stmt3.clearParameters();
 				}
 
 				if (comodo.obterTipo().equals("comodo_composto")) {
 					PreparedStatement stmtCC = conn.prepareStatement(sqlCC);
-					stmtCC.setInt(1, id);
 					
 					for (Comodo comodoAssoc : ((ComodoComposto) comodo).obterComodos()) {
+						stmtCC.setInt(1, id);
 						stmtCC.setInt(2, comodoAssoc.obterId());
 						
 						stmtCC.executeUpdate();
+						stmtCC.clearParameters();
 					}
 				}
 			
@@ -235,25 +237,29 @@ public class ComodoBanco implements AutoCloseable {
 		}
 
 		// associa as mobilias necessarias
-		stmtInsertCM.setInt(1, comodo.obterId());
-		
 		for (Mobilia mobilia : comodo.listaMobiliaDisponivel()) {
 			if (!mobiliasIds.contains(mobilia.obterId())) {
+				stmtInsertCM.setInt(1, comodo.obterId());
 				stmtInsertCM.setInt(2, mobilia.obterId());
 
 				stmtInsertCM.executeUpdate();
+				stmtInsertCM.clearParameters();
 			}
 		}
 
 		// desassocia as mobilias necessarias
-		stmtRemoveCM.setInt(1, comodo.obterId());
-		
-		for (int mobiliaId : mobiliasIds) {
-			if (!comodo.listaMobiliaDisponivel().contains(this.get(mobiliaId))) {
-				stmtRemoveCM.setInt(2, mobiliaId);
-				
-				stmtRemoveCM.executeUpdate();
+		try (MobiliaBanco bd = new MobiliaBanco()) {
+			for (int mobiliaId : mobiliasIds) {
+				if (!comodo.listaMobiliaDisponivel().contains(bd.get(mobiliaId))) {
+					stmtRemoveCM.setInt(1, comodo.obterId());
+					stmtRemoveCM.setInt(2, mobiliaId);
+					
+					stmtRemoveCM.executeUpdate();
+					stmtRemoveCM.clearParameters();
+				}
 			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
 		}
 
 		if (comodo.obterTipo().equals("comodo_composto")) {
@@ -277,24 +283,24 @@ public class ComodoBanco implements AutoCloseable {
 			}
 	
 			// associa os comodos necessarios
-			stmtInsert.setInt(1, comodoComposto.obterId());
-			
 			for (Comodo comodoAssoc : comodoComposto.obterComodos()) {
 				if (!comodosIds.contains(comodoAssoc.obterId())) {
+					stmtInsert.setInt(1, comodoComposto.obterId());
 					stmtInsert.setInt(2, comodoAssoc.obterId());
 	
 					stmtInsert.executeUpdate();
+					stmtInsert.clearParameters();
 				}
 			}
 	
 			// desassocia as mobilias necessarias
-			stmtRemove.setInt(1, comodoComposto.obterId());
-			
 			for (int comodoId : comodosIds) {
 				if (!comodoComposto.obterComodos().contains(this.get(comodoId))) {
+					stmtRemove.setInt(1, comodoComposto.obterId());
 					stmtRemove.setInt(2, comodoId);
 					
 					stmtRemove.executeUpdate();
+					stmtRemove.clearParameters();
 				}
 			}
 		}
