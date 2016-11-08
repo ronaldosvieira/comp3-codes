@@ -114,12 +114,23 @@ public class MobiliaBanco implements AutoCloseable {
 	}
 	
 	public boolean remove(int id) throws SQLException {
+		String sqlCM = "delete from comodo_mobilia where mobilia_id = ?";
 		String sql = "delete from mobilia where id = ?";
+		
+		try {
+			this.get(id);
+		} catch (IndexOutOfBoundsException e) {
+			throw e;
+		}
+		
+		PreparedStatement stmtCM = conn.prepareStatement(sqlCM);
+		stmtCM.setInt(1, id);
 		
 		PreparedStatement stmt = conn.prepareStatement(sql);
 		stmt.setInt(1, id);
 		
-		stmt.execute();
+		stmtCM.executeUpdate();
+		stmt.executeUpdate();
 		
 		int affectedRows = stmt.getUpdateCount();
 		
