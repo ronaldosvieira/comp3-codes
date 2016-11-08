@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import entidades.Comodo;
+import entidades.ComodoComposto;
 import persistencia.ComodoBanco;
 
 /**
@@ -37,6 +39,22 @@ public class ControladorRemoverCozinha extends HttpServlet {
 		int id = Integer.parseInt(request.getParameter("id"));
 
 		try (ComodoBanco bd = new ComodoBanco()) {
+			Comodo comodo = bd.get(id);
+			
+			if (!comodo.listaMobiliaDisponivel().isEmpty()) {
+				response.getWriter().append("O cômodo '" + comodo.obterDescricao() + 
+						"' não pode ser removido, pois, existem mobílias associadas a ele.");
+				return;
+			}
+			
+			for (Comodo comodoComposto : bd.get("comodo_composto")) {
+				if (((ComodoComposto) comodoComposto).obterComodos().contains(comodo)) {
+					response.getWriter().append("O cômodo '" + comodo.obterDescricao() + 
+							"' não pode ser removido, pois, existem cômodos compostos associados a ele.");
+					return;
+				}
+			}
+			
 			bd.remove(id);
 		} catch (Exception e) {
 			response.getWriter().append("Erro ao acessar o banco de dados: \n");
