@@ -69,5 +69,4 @@ public class Ambiente {
 		return this.metragem;
 	}
 	
-	
 }

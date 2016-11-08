@@ -13,6 +13,8 @@ import entidades.ItemVenda;
 
 public class ItemVendaBanco implements AutoCloseable {
 	Connection conn;
+	MobiliaBanco mobiliaBd;
+	AmbienteBanco ambienteBd;
 	
 	public ItemVendaBanco() throws ClassNotFoundException, SQLException {
 		Class.forName("org.h2.Driver");
@@ -22,9 +24,12 @@ public class ItemVendaBanco implements AutoCloseable {
 		String pass = "123456";
 		
 		conn = DriverManager.getConnection(url, user, pass);
+		
+		this.mobiliaBd = new MobiliaBanco();
+		this.ambienteBd = new AmbienteBanco();
 	}
 	
-	public List<ItemVenda> get() throws SQLException {
+	public List<ItemVenda> get() throws SQLException, ClassNotFoundException {
 		String sql = "select * from item_venda";
 		ResultSet rs = null;
 		
@@ -37,7 +42,9 @@ public class ItemVendaBanco implements AutoCloseable {
 		while (rs.next()) {
 			results.add(new ItemVenda(
 					rs.getInt("id"),
-					rs.getInt("quantidade")));
+					rs.getInt("quantidade"),
+					mobiliaBd.get(rs.getInt("mobilia_id")),
+					ambienteBd.get(rs.getInt("ambiente_id"))));
 		}
 		
 		return results;
@@ -61,7 +68,9 @@ public class ItemVendaBanco implements AutoCloseable {
 		if (rs.next()) {
 			ItemVenda = new ItemVenda(
 					rs.getInt("id"),
-					rs.getInt("quantidade"));
+					rs.getInt("quantidade"),
+					mobiliaBd.get(rs.getInt("mobilia_id")),
+					ambienteBd.get(rs.getInt("ambiente_id")));
 		} else {
 			throw new IndexOutOfBoundsException();
 		}
@@ -69,12 +78,14 @@ public class ItemVendaBanco implements AutoCloseable {
 		return ItemVenda;
 	}
 	
-	public int insert(ItemVenda ItemVenda) throws SQLException {
-		String sql = "insert into item_venda (quantidade) "
-				+ "values (?)";
+	public int insert(ItemVenda itemVenda) throws SQLException {
+		String sql = "insert into item_venda (quantidade, mobilia_id, ambiente_id) "
+				+ "values (?, ?, ?)";
 		
 		PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-		stmt.setInt(1, ItemVenda.obterQuantidade());
+		stmt.setInt(1, itemVenda.obterQuantidade());
+		stmt.setInt(2, itemVenda.obterMobilia().obterId());
+		stmt.setInt(3, itemVenda.obterAmbiente().obterId());
 		
 		stmt.executeUpdate();
 		
@@ -121,5 +132,8 @@ public class ItemVendaBanco implements AutoCloseable {
 			conn.rollback();
 			conn.close();
 		}
+		
+		mobiliaBd.close();
+		ambienteBd.close();
 	}
 }

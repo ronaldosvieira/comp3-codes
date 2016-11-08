@@ -1,5 +1,6 @@
 package entidades;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Contrato {
@@ -9,11 +10,13 @@ public class Contrato {
 	
 	public Contrato(float comissao) {
 		this.comissao = comissao;
+		this.ambientes = new ArrayList<>();
 	}
 	
 	public Contrato(int id, float comissao) {
 		this.id = id;
 		this.comissao = comissao;
+		this.ambientes = new ArrayList<>();
 	}
 	
 	public void inserirAmbiente(Ambiente ambiente) {

@@ -84,7 +84,7 @@ public class ContratoBanco implements AutoCloseable {
 			PreparedStatement stmt2 = conn.prepareStatement(sql2);
 			stmt2.setInt(1, contrato.obterId());
 			
-			if (stmt.execute()) rs2 = stmt2.getResultSet();
+			if (stmt2.execute()) rs2 = stmt2.getResultSet();
 			
 			while (rs2.next()) {
 				contrato.inserirAmbiente(bd.get(rs2.getInt("id")));
@@ -123,7 +123,7 @@ public class ContratoBanco implements AutoCloseable {
 	}
 
 	public void update(int id, Contrato contrato) throws SQLException {
-		String sql = "update comodo set comissao = ? where id = ?";
+		String sql = "update contrato set comissao = ? where id = ?";
 		String sql2 = "select * from ambiente where contrato_id = ?";
 		
 		PreparedStatement stmt = conn.prepareStatement(sql);
@@ -138,7 +138,7 @@ public class ContratoBanco implements AutoCloseable {
 		PreparedStatement stmt2 = conn.prepareStatement(sql2);
 		stmt2.setInt(1, contrato.obterId());
 		
-		if (stmt.execute()) rs2 = stmt2.getResultSet();
+		if (stmt2.execute()) rs2 = stmt2.getResultSet();
 		
 		while (rs2.next()) {
 			ambientes.add(bd.get(rs2.getInt("id")));
