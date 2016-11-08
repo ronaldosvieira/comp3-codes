@@ -64,7 +64,7 @@ public class ControladorCriarComodoComposto extends HttpServlet {
 			e.printStackTrace(response.getWriter());
 		}
 		
-		response.sendRedirect("../comodocomposto/ler");
+		response.sendRedirect("ler");
 	}
 
 }
