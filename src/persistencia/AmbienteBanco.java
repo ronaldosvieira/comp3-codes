@@ -73,14 +73,15 @@ public class AmbienteBanco implements AutoCloseable {
 		return ambiente;
 	}
 	
-	public int insert(Ambiente ambiente) throws SQLException {
+	public int insert(int contratoId, Ambiente ambiente) throws SQLException {
 		String sql = "insert into ambiente (contrato_id, num_paredes, num_portas, metragem) "
-				+ "values (1, ?, ?, ?)";
+				+ "values (?, ?, ?, ?)";
 		
 		PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-		stmt.setInt(1, ambiente.obterNumParedes());
-		stmt.setInt(2, ambiente.obterNumPortas());
-		stmt.setFloat(3, ambiente.obterMetragem());
+		stmt.setInt(1, contratoId);
+		stmt.setInt(2, ambiente.obterNumParedes());
+		stmt.setInt(3, ambiente.obterNumPortas());
+		stmt.setFloat(4, ambiente.obterMetragem());
 		
 		stmt.executeUpdate();
 		
