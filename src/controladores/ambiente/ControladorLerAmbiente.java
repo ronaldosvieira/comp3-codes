@@ -12,8 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import entidades.Ambiente;
+import excecoes.DatabaseAccessException;
 import entidades.Ambiente;
 import persistencia.AmbienteBanco;
+import roteiros.ambiente.LerAmbienteTS;
 
 /**
  * Servlet implementation class ControladorLerAmbiente
@@ -26,7 +28,6 @@ public class ControladorLerAmbiente extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		List<Ambiente> ambientes = null;
 		int contratoId;
 		
 		try {
@@ -36,16 +37,15 @@ public class ControladorLerAmbiente extends HttpServlet {
 			return;
 		}
 		
-		try (AmbienteBanco bd = new AmbienteBanco()) {
-			ambientes = bd.getWhereContratoId(contratoId);
-		} catch (Exception e) {
-			response.getWriter().append("Erro ao acessar o banco de dados: \n");
-			e.printStackTrace(response.getWriter());
-			return;
+		List<Ambiente> ambientes;
+		try {
+			ambientes = LerAmbienteTS.execute(contratoId);
+			
+			request.setAttribute("contrato_id", contratoId);
+			request.setAttribute("ambientes", ambientes);
+		} catch (DatabaseAccessException e) {
+			e.printStackTrace();
 		}
-		
-		request.setAttribute("contrato_id", contratoId);
-		request.setAttribute("ambientes", ambientes);
 		
 		RequestDispatcher rd = request.getRequestDispatcher("../../FronteiraLerAmbiente.jsp");
 		rd.forward(request, response);

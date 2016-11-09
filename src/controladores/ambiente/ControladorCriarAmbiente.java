@@ -10,7 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import entidades.Ambiente;
+import excecoes.DatabaseAccessException;
 import persistencia.AmbienteBanco;
+import roteiros.ambiente.GuardarAmbienteTS;
 
 /**
  * Servlet implementation class ControladorCriarAmbiente
@@ -47,13 +49,10 @@ public class ControladorCriarAmbiente extends HttpServlet {
 		float metragem = Float.parseFloat(request.getParameter("metragem"));
 		int contratoId = Integer.parseInt(request.getParameter("contrato_id"));
 		
-		Ambiente ambiente = new Ambiente(numParedes, numPortas, metragem, contratoId);
-		
-		try (AmbienteBanco bd = new AmbienteBanco()) {
-			bd.insert(ambiente.obterContratoId(), ambiente);
-		} catch (Exception e) {
-			response.getWriter().append("Erro ao acessar o banco de dados: \n");
-			e.printStackTrace(response.getWriter());
+		try {
+			GuardarAmbienteTS.execute(numParedes, numPortas, metragem, contratoId);
+		} catch (DatabaseAccessException e) {
+			e.printStackTrace();
 		}
 		
 		response.sendRedirect("ler?contrato_id=" + contratoId);

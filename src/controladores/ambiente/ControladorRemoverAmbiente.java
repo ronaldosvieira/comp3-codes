@@ -13,7 +13,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import entidades.Ambiente;
+import excecoes.DatabaseAccessException;
 import persistencia.AmbienteBanco;
+import roteiros.ambiente.ObterAmbienteTS;
+import roteiros.ambiente.RemoverAmbienteTS;
 
 /**
  * Servlet implementation class ControladorRemoverAmbiente
@@ -28,12 +31,12 @@ public class ControladorRemoverAmbiente extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int id = Integer.parseInt(request.getParameter("id"));
 		
-		try (AmbienteBanco bd = new AmbienteBanco()) {
-			Ambiente ambiente = bd.get(id);
+		try {
+			Ambiente ambiente = ObterAmbienteTS.execute(id);
 
 			request.setAttribute("id", id);
 			request.setAttribute("contrato_id", ambiente.obterContratoId());
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (DatabaseAccessException e) {
 			e.printStackTrace();
 		}
 		
@@ -48,12 +51,10 @@ public class ControladorRemoverAmbiente extends HttpServlet {
 		int id = Integer.parseInt(request.getParameter("id"));
 		int contratoId = Integer.parseInt(request.getParameter("contrato_id"));
 
-		try (AmbienteBanco bd = new AmbienteBanco()) {
-			bd.remove(id);
-		} catch (Exception e) {
-			response.getWriter().append("Erro ao acessar o banco de dados: \n");
-			e.printStackTrace(response.getWriter());
-			return;
+		try {
+			RemoverAmbienteTS.execute(id);
+		} catch (DatabaseAccessException e) {
+			e.printStackTrace();
 		}
 	
 		response.sendRedirect("ler?contrato_id=" + contratoId);

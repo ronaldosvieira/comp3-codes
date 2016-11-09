@@ -10,7 +10,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import entidades.Ambiente;
+import excecoes.DatabaseAccessException;
 import persistencia.AmbienteBanco;
+import roteiros.ambiente.ObterAmbienteTS;
+import roteiros.ambiente.AlterarAmbienteTS;
 
 /**
  * Servlet implementation class ControladorAlterarAmbiente
@@ -33,12 +36,10 @@ public class ControladorAlterarAmbiente extends HttpServlet {
 			return;
 		}
 		
-		try (AmbienteBanco bd = new AmbienteBanco()) {
-			ambiente = bd.get(id);
-		} catch (Exception e) {
-			response.getWriter().append("Erro ao acessar o banco de dados: \n");
-			e.printStackTrace(response.getWriter());
-			return;
+		try {
+			ambiente = ObterAmbienteTS.execute(id);
+		} catch (DatabaseAccessException e) {
+			e.printStackTrace();
 		}
 		
 		request.setAttribute("id", id);
@@ -58,14 +59,10 @@ public class ControladorAlterarAmbiente extends HttpServlet {
 		float metragem = Float.parseFloat(request.getParameter("metragem"));
 		int contratoId = Integer.parseInt(request.getParameter("contrato_id"));
 		
-		Ambiente ambiente = new Ambiente(id, numParedes, numPortas, metragem, contratoId);
-		
-		try (AmbienteBanco bd = new AmbienteBanco()) {
-			bd.update(id, ambiente);
-		} catch (Exception e) {
-			response.getWriter().append("Erro ao acessar o banco de dados: \n");
-			e.printStackTrace(response.getWriter());
-			return;
+		try {
+			AlterarAmbienteTS.execute(id, numParedes, numPortas, metragem, contratoId);
+		} catch (DatabaseAccessException e) {
+			e.printStackTrace();
 		}
 		
 		response.sendRedirect("ler?contrato_id=" + contratoId);
