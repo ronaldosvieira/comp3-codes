@@ -1,6 +1,7 @@
 package controladores.ambiente;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import persistencia.AmbienteBanco;
 /**
  * Servlet implementation class ControladorRemoverAmbiente
  */
-@WebServlet("/ambiente/remover")
+@WebServlet("/contrato/ambiente/remover")
 public class ControladorRemoverAmbiente extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -27,9 +28,16 @@ public class ControladorRemoverAmbiente extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int id = Integer.parseInt(request.getParameter("id"));
 		
-		request.setAttribute("id", id);
+		try (AmbienteBanco bd = new AmbienteBanco()) {
+			Ambiente ambiente = bd.get(id);
+
+			request.setAttribute("id", id);
+			request.setAttribute("contrato_id", ambiente.obterContratoId());
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
 		
-		RequestDispatcher rd = request.getRequestDispatcher("../FronteiraRemoverAmbiente.jsp");
+		RequestDispatcher rd = request.getRequestDispatcher("../../FronteiraRemoverAmbiente.jsp");
 		rd.forward(request, response);
 	}
 
@@ -38,6 +46,7 @@ public class ControladorRemoverAmbiente extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int id = Integer.parseInt(request.getParameter("id"));
+		int contratoId = Integer.parseInt(request.getParameter("contrato_id"));
 
 		try (AmbienteBanco bd = new AmbienteBanco()) {
 			bd.remove(id);
@@ -46,8 +55,8 @@ public class ControladorRemoverAmbiente extends HttpServlet {
 			e.printStackTrace(response.getWriter());
 			return;
 		}
-		
-		response.sendRedirect("ler");
+	
+		response.sendRedirect("ler?contrato_id=" + contratoId);
 	}
 
 }

@@ -10,9 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import entidades.Ambiente;
+import entidades.ItemVenda;
 
 public class AmbienteBanco implements AutoCloseable {
 	Connection conn;
+	private ItemVendaBanco bd;
 	
 	public AmbienteBanco() throws ClassNotFoundException, SQLException {
 		Class.forName("org.h2.Driver");
@@ -22,6 +24,8 @@ public class AmbienteBanco implements AutoCloseable {
 		String pass = "123456";
 		
 		conn = DriverManager.getConnection(url, user, pass);
+		
+		bd = new ItemVendaBanco();
 	}
 	
 	public List<Ambiente> get() throws SQLException {
@@ -35,11 +39,20 @@ public class AmbienteBanco implements AutoCloseable {
 		List<Ambiente> results = new ArrayList<>();
 		
 		while (rs.next()) {
-			results.add(new Ambiente(
+			Ambiente ambiente = new Ambiente(
 					rs.getInt("id"),
 					rs.getInt("num_paredes"),
 					rs.getInt("num_portas"),
-					rs.getFloat("metragem")));
+					rs.getFloat("metragem"),
+					rs.getInt("contrato_id"));
+			
+			List<ItemVenda> itens = bd.getWhereAmbienteId(ambiente.obterId());
+			
+			for (ItemVenda item : itens) {
+				ambiente.inserirItemVenda(item);
+			}
+			
+			results.add(ambiente);
 		}
 		
 		return results;
@@ -65,13 +78,57 @@ public class AmbienteBanco implements AutoCloseable {
 					rs.getInt("id"),
 					rs.getInt("num_paredes"),
 					rs.getInt("num_portas"),
-					rs.getFloat("metragem"));
+					rs.getFloat("metragem"),
+					rs.getInt("contrato_id"));
+			
+			List<ItemVenda> itens = bd.getWhereAmbienteId(ambiente.obterId());
+			
+			for (ItemVenda item : itens) {
+				ambiente.inserirItemVenda(item);
+			}
 		} else {
 			throw new IndexOutOfBoundsException();
 		}
 		
 		return ambiente;
 	}
+	
+	public List<Ambiente> getWhereContratoId(int contratoId) throws SQLException, IndexOutOfBoundsException {
+		String sql = "select * "
+				+ "from ambiente "
+				+ "where contrato_id = ?";
+		ResultSet rs = null;
+		
+		PreparedStatement stmt = conn.prepareStatement(sql);
+		stmt.setInt(1, contratoId);
+		
+		if (stmt.execute()) rs = stmt.getResultSet();
+		else {
+			throw new IndexOutOfBoundsException();
+		}
+		
+		List<Ambiente> results = new ArrayList<>();
+		
+		while (rs.next()) {
+			Ambiente ambiente = new Ambiente(
+					rs.getInt("id"),
+					rs.getInt("num_paredes"),
+					rs.getInt("num_portas"),
+					rs.getFloat("metragem"),
+					rs.getInt("contrato_id"));
+			
+			List<ItemVenda> itens = bd.getWhereAmbienteId(ambiente.obterId());
+			
+			for (ItemVenda item : itens) {
+				ambiente.inserirItemVenda(item);
+			}
+			
+			results.add(ambiente);
+		}
+		
+		return results;
+	}
+	
 	
 	public int insert(int contratoId, Ambiente ambiente) throws SQLException {
 		String sql = "insert into ambiente (contrato_id, num_paredes, num_portas, metragem) "
@@ -89,6 +146,10 @@ public class AmbienteBanco implements AutoCloseable {
 			if (generatedKeys.next()) {
 				int id = generatedKeys.getInt(1);
 				
+				for (ItemVenda item : ambiente.obterItens()) {
+					bd.insert(item);
+				}
+				
 				return id;
 			}
 		} catch (Exception e) {
@@ -100,9 +161,9 @@ public class AmbienteBanco implements AutoCloseable {
 
 	public void update(int id, Ambiente ambiente) throws SQLException {
 		String sql = "update ambiente set "
-				+ "descricao = ?, "
-				+ "custo = ?, "
-				+ "tempo_entrega = ? "
+				+ "num_paredes = ?, "
+				+ "num_portas = ?, "
+				+ "metragem = ? "
 				+ "where id = ?";
 		
 		PreparedStatement stmt = conn.prepareStatement(sql);
@@ -112,6 +173,20 @@ public class AmbienteBanco implements AutoCloseable {
 		stmt.setInt(4, id);
 		
 		stmt.executeUpdate();
+		
+		List<ItemVenda> itens = bd.getWhereAmbienteId(id);
+		
+		for (ItemVenda item : ambiente.obterItens()) {
+			if (!itens.contains(item)) {
+				bd.insert(item);
+			}
+		}
+		
+		for (ItemVenda item : itens) {
+			if (!itens.contains(item)) {
+				bd.remove(item.obterId());
+			}
+		}
 	}
 	
 	public boolean remove(int id) throws SQLException {
@@ -119,6 +194,12 @@ public class AmbienteBanco implements AutoCloseable {
 		
 		PreparedStatement stmt = conn.prepareStatement(sql);
 		stmt.setInt(1, id);
+		
+		List<ItemVenda> itens = bd.getWhereAmbienteId(id);
+		
+		for (ItemVenda item : itens) {
+			bd.remove(item.obterId());
+		}
 		
 		stmt.execute();
 		

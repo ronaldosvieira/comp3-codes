@@ -30,7 +30,7 @@
 			<td><%= contrato.obterId() %></td>
 			<td><%= contrato.obterComissao() %></td>
 			<td>
-				<a href="ambientes?id=<%= contrato.obterId() %>">
+				<a href="ambiente/ler?contrato_id=<%= contrato.obterId() %>">
 					Ambientes
 				</a>&nbsp;
 				<a href="alterar?id=<%= contrato.obterId() %>">

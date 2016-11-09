@@ -15,7 +15,7 @@ import persistencia.AmbienteBanco;
 /**
  * Servlet implementation class ControladorCriarAmbiente
  */
-@WebServlet("/ambiente/criar")
+@WebServlet("/contrato/ambiente/criar")
 public class ControladorCriarAmbiente extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -23,7 +23,18 @@ public class ControladorCriarAmbiente extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		RequestDispatcher rd = request.getRequestDispatcher("../FronteiraCriarAmbiente.jsp");
+		int contratoId;
+		
+		try {
+			contratoId = Integer.parseInt(request.getParameter("contrato_id"));
+		} catch (NumberFormatException e) {
+			response.sendRedirect("ler");
+			return;
+		}
+		
+		request.setAttribute("contrato_id", contratoId);
+		
+		RequestDispatcher rd = request.getRequestDispatcher("../../FronteiraCriarAmbiente.jsp");
 		rd.forward(request, response);
 	}
 
@@ -34,17 +45,18 @@ public class ControladorCriarAmbiente extends HttpServlet {
 		int numParedes = Integer.parseInt(request.getParameter("numParedes"));
 		int numPortas = Integer.parseInt(request.getParameter("numPortas"));
 		float metragem = Float.parseFloat(request.getParameter("metragem"));
+		int contratoId = Integer.parseInt(request.getParameter("contrato_id"));
 		
-		Ambiente ambiente = new Ambiente(numParedes, numPortas, metragem);
+		Ambiente ambiente = new Ambiente(numParedes, numPortas, metragem, contratoId);
 		
 		try (AmbienteBanco bd = new AmbienteBanco()) {
-			bd.insert(ambiente);
+			bd.insert(ambiente.obterContratoId(), ambiente);
 		} catch (Exception e) {
 			response.getWriter().append("Erro ao acessar o banco de dados: \n");
 			e.printStackTrace(response.getWriter());
 		}
 		
-		response.sendRedirect("ler");
+		response.sendRedirect("ler?contrato_id=" + contratoId);
 	}
 
 }

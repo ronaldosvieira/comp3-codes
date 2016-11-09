@@ -14,7 +14,6 @@ import entidades.ItemVenda;
 public class ItemVendaBanco implements AutoCloseable {
 	Connection conn;
 	MobiliaBanco mobiliaBd;
-	AmbienteBanco ambienteBd;
 	
 	public ItemVendaBanco() throws ClassNotFoundException, SQLException {
 		Class.forName("org.h2.Driver");
@@ -26,10 +25,9 @@ public class ItemVendaBanco implements AutoCloseable {
 		conn = DriverManager.getConnection(url, user, pass);
 		
 		this.mobiliaBd = new MobiliaBanco();
-		this.ambienteBd = new AmbienteBanco();
 	}
 	
-	public List<ItemVenda> get() throws SQLException, ClassNotFoundException {
+	public List<ItemVenda> get() throws SQLException {
 		String sql = "select * from item_venda";
 		ResultSet rs = null;
 		
@@ -44,7 +42,51 @@ public class ItemVendaBanco implements AutoCloseable {
 					rs.getInt("id"),
 					rs.getInt("quantidade"),
 					mobiliaBd.get(rs.getInt("mobilia_id")),
-					ambienteBd.get(rs.getInt("ambiente_id"))));
+					rs.getInt("ambiente_id")));
+		}
+		
+		return results;
+	}
+	
+	public List<ItemVenda> getWhereAmbienteId(int ambienteId) throws SQLException {
+		String sql = "select * from item_venda where ambiente_id = ?";
+		ResultSet rs = null;
+		
+		PreparedStatement stmt = conn.prepareStatement(sql);
+		stmt.setInt(1, ambienteId);
+		
+		if (stmt.execute()) rs = stmt.getResultSet();
+		
+		List<ItemVenda> results = new ArrayList<>();
+		
+		while (rs.next()) {
+			results.add(new ItemVenda(
+					rs.getInt("id"),
+					rs.getInt("quantidade"),
+					mobiliaBd.get(rs.getInt("mobilia_id")),
+					rs.getInt("ambiente_id")));
+		}
+		
+		return results;
+	}
+	
+	public List<ItemVenda> getWhereMobiliaId(int mobiliaId) throws SQLException {
+		String sql = "select * from item_venda where mobilia_id = ?";
+		ResultSet rs = null;
+		
+		PreparedStatement stmt = conn.prepareStatement(sql);
+		stmt.setInt(1, mobiliaId);
+		
+		if (stmt.execute()) rs = stmt.getResultSet();
+		
+		List<ItemVenda> results = new ArrayList<>();
+		
+		while (rs.next()) {
+			results.add(new ItemVenda(
+					rs.getInt("id"),
+					rs.getInt("quantidade"),
+					mobiliaBd.get(rs.getInt("mobilia_id")),
+					rs.getInt("ambiente_id")));
 		}
 		
 		return results;
@@ -70,7 +112,7 @@ public class ItemVendaBanco implements AutoCloseable {
 					rs.getInt("id"),
 					rs.getInt("quantidade"),
 					mobiliaBd.get(rs.getInt("mobilia_id")),
-					ambienteBd.get(rs.getInt("ambiente_id")));
+					rs.getInt("ambiente_id"));
 		} else {
 			throw new IndexOutOfBoundsException();
 		}
@@ -85,7 +127,7 @@ public class ItemVendaBanco implements AutoCloseable {
 		PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 		stmt.setInt(1, itemVenda.obterQuantidade());
 		stmt.setInt(2, itemVenda.obterMobilia().obterId());
-		stmt.setInt(3, itemVenda.obterAmbiente().obterId());
+		stmt.setInt(3, itemVenda.obterAmbienteId());
 		
 		stmt.executeUpdate();
 		
@@ -134,6 +176,5 @@ public class ItemVendaBanco implements AutoCloseable {
 		}
 		
 		mobiliaBd.close();
-		ambienteBd.close();
 	}
 }

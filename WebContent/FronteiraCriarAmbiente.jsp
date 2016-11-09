@@ -8,11 +8,14 @@
 </head>
 <body>
 
+<% int contratoId = (Integer) request.getAttribute("contrato_id"); %>
+
 <form method="post" action="./criar">
-	<h2>Criar Ambiente</h2>
+	<h2>Criar Ambiente para Contrato <%= contratoId %></h2>
 	<input type="number" name="numParedes" placeholder="Núm. de paredes"><br>
 	<input type="number" name="numPortas" placeholder="Núm. de portas"><br>
 	<input type="number" name="metragem" step=0.01 placeholder="Metragem"><br>
+	<input type="hidden" name="contrato_id" value="<%= contratoId %>">
 	<button type="submit">Enviar</button>
 </form>
 

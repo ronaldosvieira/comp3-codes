@@ -1,23 +1,33 @@
 package entidades;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Ambiente {
 	private Integer id;
 	private List<ItemVenda> itens;
+	private int contratoId;
 	private int numParedes;
 	private int numPortas;
 	private float metragem;
 	
-	public Ambiente(int numParedes, int numPortas, float metragem) {
+	public Ambiente(int numParedes, int numPortas, float metragem, int contratoId) {
 		this.numParedes = numParedes;
 		this.numPortas = numPortas;
 		this.metragem = metragem;
+		this.contratoId = contratoId;
+		this.itens = new ArrayList<>();
 	}
 	
-	public Ambiente(int id, int numParedes, int numPortas, float metragem) {
-		this(numParedes, numPortas, metragem);
+	public Ambiente(int id, int numParedes, int numPortas, float metragem, int contratoId) {
+		this(numParedes, numPortas, metragem, contratoId);
 		this.id = id;
+	}
+	
+	public void inserirItemVenda(ItemVenda itemVenda) {
+		if (!itens.contains(itemVenda)) {
+			itens.add(itemVenda);
+		}
 	}
 	
 	public float custo() {
@@ -67,6 +77,10 @@ public class Ambiente {
 
 	public float obterMetragem() {
 		return this.metragem;
+	}
+	
+	public int obterContratoId() {
+		return this.contratoId;
 	}
 	
 }

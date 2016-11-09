@@ -18,7 +18,7 @@ import persistencia.AmbienteBanco;
 /**
  * Servlet implementation class ControladorLerAmbiente
  */
-@WebServlet("/ambiente/ler")
+@WebServlet("/contrato/ambiente/ler")
 public class ControladorLerAmbiente extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -27,18 +27,27 @@ public class ControladorLerAmbiente extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		List<Ambiente> ambientes = null;
+		int contratoId;
+		
+		try {
+			contratoId = Integer.parseInt(request.getParameter("contrato_id"));
+		} catch (NumberFormatException e) {
+			response.sendRedirect("../ler");
+			return;
+		}
 		
 		try (AmbienteBanco bd = new AmbienteBanco()) {
-			ambientes = bd.get();
+			ambientes = bd.getWhereContratoId(contratoId);
 		} catch (Exception e) {
 			response.getWriter().append("Erro ao acessar o banco de dados: \n");
 			e.printStackTrace(response.getWriter());
 			return;
 		}
 		
+		request.setAttribute("contrato_id", contratoId);
 		request.setAttribute("ambientes", ambientes);
 		
-		RequestDispatcher rd = request.getRequestDispatcher("../FronteiraLerAmbiente.jsp");
+		RequestDispatcher rd = request.getRequestDispatcher("../../FronteiraLerAmbiente.jsp");
 		rd.forward(request, response);
 	}
 

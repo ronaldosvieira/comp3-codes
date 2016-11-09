@@ -3,20 +3,20 @@ package entidades;
 public class ItemVenda {
 	private Integer id;
 	private Mobilia mobilia;
-	private Ambiente ambiente;
+	private int ambienteId;
 	private int quantidade;
 	
-	public ItemVenda(int quantidade, Mobilia mobilia, Ambiente ambiente) {
+	public ItemVenda(int quantidade, Mobilia mobilia, int ambienteId) {
 		this.quantidade = quantidade;
 		this.mobilia = mobilia;
-		this.ambiente = ambiente;
+		this.ambienteId = ambienteId;
 	}
 	
-	public ItemVenda(int id, int quantidade, Mobilia mobilia, Ambiente ambiente) {
+	public ItemVenda(int id, int quantidade, Mobilia mobilia, int ambienteId) {
 		this.id = id;
 		this.quantidade = quantidade;
 		this.mobilia = mobilia;
-		this.ambiente = ambiente;
+		this.ambienteId = ambienteId;
 	}
 	
 	public int obterId() {
@@ -27,8 +27,8 @@ public class ItemVenda {
 		return this.mobilia;
 	}
 	
-	public Ambiente obterAmbiente() {
-		return this.ambiente;
+	public int obterAmbienteId() {
+		return this.ambienteId;
 	}
 	
 	public int obterQuantidade() {

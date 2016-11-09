@@ -17,6 +17,7 @@
 	<h2>Alterar Ambiente</h2>
 	
 	<input type="hidden" name="id" value="<%= request.getAttribute("id") %>">
+	<input type="hidden" name="contrato_id" value="<%= ambiente.obterContratoId() %>">
 	
 	<input type="number" name="numParedes" placeholder="Núm. de paredes" 
 		value="<%= ambiente.obterNumParedes() %>">
@@ -28,7 +29,7 @@
 		value="<%= ambiente.obterMetragem() %>">
 	<br>
 	<button type="submit">Enviar</button>
-	<a href="ler">Voltar</a>
+	<a href="ler?contrato_id=<%= ambiente.obterContratoId() %>">Voltar</a>
 </form>
 
 </body>

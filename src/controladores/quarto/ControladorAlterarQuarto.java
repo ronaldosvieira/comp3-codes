@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import entidades.Quarto;
 import persistencia.ComodoBanco;
-import persistencia.QuartoBanco;
 
 /**
  * Servlet implementation class ControladorAlterarQuarto

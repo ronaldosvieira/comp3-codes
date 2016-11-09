@@ -8,13 +8,14 @@
 </head>
 <body>
 
-<h2>Ler Ambiente</h2>
-
 <%@ page import = "entidades.Ambiente" %>
 <%@ page import = "java.util.List" %>
 
 <% List<Ambiente> ambientes = 
 	(List<Ambiente>) request.getAttribute("ambientes"); %>
+<% int contratoId = (Integer) request.getAttribute("contrato_id"); %>
+
+<h2>Ambientes do Contrato <%= contratoId %></h2>
 
 <table>
 	<thead>
@@ -47,7 +48,7 @@
 </table>
 
 <a href="..">Voltar</a>
-<a href="criar">Criar</a>
+<a href="criar?contrato_id=<%= contratoId %>">Criar</a>
 
 </body>
 </html>

@@ -9,13 +9,14 @@
 <body>
 
 <form method="post" action="./remover">
-	<h2>Remover Ambiente</h2>
+	<h2>Remover Ambiente do Contrato <%= request.getAttribute("contrato_id") %></h2>
 	<input type="hidden" name="id" value="<%= request.getAttribute("id") %>">
+	<input type="hidden" name="contrato_id" value="<%= request.getAttribute("contrato_id") %>">
 	
 	<p>Deseja remover o ambiente <%= request.getAttribute("id") %>?
 	<br>
 	<button type="submit">Sim</button>
-	<a href="./ler">Não</a>
+	<a href="./ler?contrato_id=<%= request.getAttribute("contrato_id") %>">Não</a>
 </form>
 </body>
 </html>

@@ -15,7 +15,7 @@ import persistencia.AmbienteBanco;
 /**
  * Servlet implementation class ControladorAlterarAmbiente
  */
-@WebServlet("/ambiente/alterar")
+@WebServlet("/contrato/ambiente/alterar")
 public class ControladorAlterarAmbiente extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     
@@ -44,7 +44,7 @@ public class ControladorAlterarAmbiente extends HttpServlet {
 		request.setAttribute("id", id);
 		request.setAttribute("ambiente", ambiente);
 		
-		RequestDispatcher rd = request.getRequestDispatcher("../FronteiraAlterarAmbiente.jsp");
+		RequestDispatcher rd = request.getRequestDispatcher("../../FronteiraAlterarAmbiente.jsp");
 		rd.forward(request, response);
 	}
 
@@ -56,8 +56,9 @@ public class ControladorAlterarAmbiente extends HttpServlet {
 		int numParedes = Integer.parseInt(request.getParameter("numParedes"));
 		int numPortas = Integer.parseInt(request.getParameter("numPortas"));
 		float metragem = Float.parseFloat(request.getParameter("metragem"));
+		int contratoId = Integer.parseInt(request.getParameter("contrato_id"));
 		
-		Ambiente ambiente = new Ambiente(id, numParedes, numPortas, metragem);
+		Ambiente ambiente = new Ambiente(id, numParedes, numPortas, metragem, contratoId);
 		
 		try (AmbienteBanco bd = new AmbienteBanco()) {
 			bd.update(id, ambiente);
@@ -67,7 +68,7 @@ public class ControladorAlterarAmbiente extends HttpServlet {
 			return;
 		}
 		
-		response.sendRedirect("ler");
+		response.sendRedirect("ler?contrato_id=" + contratoId);
 	}
 
 }
