@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<h2>Ler Item Venda</h2>
+<h2>Itens do Ambiente <%= request.getAttribute("ambiente_id") %></h2>
 
 <%@ page import = "entidades.ItemVenda" %>
 <%@ page import = "java.util.List" %>
@@ -29,23 +29,20 @@
 	<% for (ItemVenda itemVenda : itemVendas) { %>
 		<tr>
 			<td><%= itemVenda.obterId() %></td>
-			<td><%= itemVenda.obterMobilia() %></td>
+			<td><%= itemVenda.obterMobilia().obterDescricao() %></td>
 			<td><%= itemVenda.obterQuantidade() %></td>
 			<td>
 				<a href="alterar?id=<%= itemVenda.obterId() %>">
 					Editar
-				</a>&nbsp; 
-				<a href="remover?id=<%= itemVenda.obterId() %>">
-					Remover
-				</a> 
+				</a>
 			</td>
 		</tr>
 	<% } %>
 	</tbody>
 </table>
 
-<a href="..">Voltar</a>
-<a href="criar">Criar</a>
+<a href="javascript:history.go(-1)">Voltar</a>
+<a href="criar?ambiente_id=<%= request.getAttribute("ambiente_id") %>">Criar</a>
 
 </body>
 </html>

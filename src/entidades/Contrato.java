@@ -32,7 +32,7 @@ public class Contrato {
 			valor += ambiente.custo();
 		}
 		
-		valor *= 1 + comissao;
+		valor *= 1 + (comissao / 100);
 		
 		return valor;
 	}

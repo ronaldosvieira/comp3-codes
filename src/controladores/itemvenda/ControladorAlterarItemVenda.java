@@ -1,8 +1,6 @@
 package controladores.itemvenda;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -17,8 +15,8 @@ import persistencia.ItemVendaBanco;
 /**
  * Servlet implementation class ControladorRemoverItemVenda
  */
-@WebServlet("/itemvenda/remover")
-public class ControladorRemoverItemVenda extends HttpServlet {
+@WebServlet("/contrato/ambiente/item/alterar")
+public class ControladorAlterarItemVenda extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -27,9 +25,17 @@ public class ControladorRemoverItemVenda extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int id = Integer.parseInt(request.getParameter("id"));
 		
-		request.setAttribute("id", id);
+		try (ItemVendaBanco bd = new ItemVendaBanco()) {
+			ItemVenda item = bd.get(id);
+			
+			request.setAttribute("itemVenda", item);
+		} catch (Exception e) {
+			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+			e.printStackTrace(response.getWriter());
+			return;
+		}
 		
-		RequestDispatcher rd = request.getRequestDispatcher("../FronteiraRemoverItemVenda.jsp");
+		RequestDispatcher rd = request.getRequestDispatcher("../../../FronteiraAlterarItemVenda.jsp");
 		rd.forward(request, response);
 	}
 

@@ -20,7 +20,9 @@
 	<thead>
 		<tr>
 			<th>Id</th>
-			<th>Comissão</th>
+			<th>Comissão (%)</th>
+			<th>Valor (R$)</th>
+			<th>Prazo de entrega (semanas)</th>
 			<th>Ações</th>
 		</tr>
 	</thead>
@@ -29,6 +31,8 @@
 		<tr>
 			<td><%= contrato.obterId() %></td>
 			<td><%= contrato.obterComissao() %></td>
+			<td><%= contrato.valorContrato() %></td>
+			<td><%= contrato.prazo() %></td>
 			<td>
 				<a href="ambiente/ler?contrato_id=<%= contrato.obterId() %>">
 					Ambientes

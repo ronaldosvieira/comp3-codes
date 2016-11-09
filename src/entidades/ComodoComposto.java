@@ -27,7 +27,11 @@ public class ComodoComposto extends Comodo {
 		List<Mobilia> mobilias = new ArrayList<>();
 		
 		for (Comodo comodo : comodos) {
-			mobilias.addAll(comodo.listaMobiliaDisponivel());
+			for (Mobilia mobilia : comodo.listaMobiliaDisponivel()) {
+				if (!mobilias.contains(mobilia)) {
+					mobilias.add(mobilia);
+				}
+			}
 		}
 		
 		return mobilias;

@@ -10,7 +10,7 @@
 
 <form method="post" action="./criar">
 	<h2>Criar Contrato</h2>
-	<input type="number" name="comissao" step=0.01 placeholder="Comissão"><br>
+	<input type="number" name="comissao" step=0.01 placeholder="Comissão"> % <br>
 	<button type="submit">Enviar</button>
 </form>
 

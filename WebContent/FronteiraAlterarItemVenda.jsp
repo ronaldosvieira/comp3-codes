@@ -4,19 +4,30 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Alterar Item Venda</title>
+<title>Alterar Item</title>
 </head>
 <body>
 
+<%@ page import = "entidades.ItemVenda" %>
+
+<% ItemVenda itemVenda = (ItemVenda) request.getAttribute("itemVenda"); %>
+
 <form method="post" action="./alterar">
-	<h2>Alterar Item Venda</h2>
-	<input type="hidden" name="id" value="<%= request.getAttribute("id") %>">
+	<h2>Alterar Item</h2>
+	<input type="hidden" name="id" value="<%= itemVenda.obterId() %>">
 	
 	<input type="number" name="quantidade" placeholder="Quantidade" 
-		value="<%= request.getAttribute("quantidade") %>">
+		value="<%= itemVenda.obterQuantidade() %>">
 	<br>
+	<select name="mobilia_id" disabled>
+		<option value="<%= itemVenda.obterMobilia().obterId() %>">
+			<%= itemVenda.obterMobilia().obterDescricao() %>
+		</option>
+	</select>
+	<br><br>
+	
 	<button type="submit">Enviar</button>
-	<a href="ler">Voltar</a>
+	<a href="javascript:history.go(-1)">Voltar</a>
 </form>
 
 </body>

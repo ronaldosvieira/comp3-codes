@@ -9,6 +9,7 @@
 <body>
 
 <%@ page import = "entidades.Ambiente" %>
+<%@ page import = "entidades.ItemVenda" %>
 <%@ page import = "java.util.List" %>
 
 <% List<Ambiente> ambientes = 
@@ -24,6 +25,9 @@
 			<th>Número de paredes</th>
 			<th>Número de portas</th>
 			<th>Metragem</th>
+			<th>Valor (R$)</th>
+			<th>Prazo de entrega (semanas)</th>
+			<th>Itens</th>
 			<th>Ações</th>
 		</tr>
 	</thead>
@@ -34,7 +38,20 @@
 			<td><%= ambiente.obterNumParedes() %></td>
 			<td><%= ambiente.obterNumPortas() %></td>
 			<td><%= ambiente.obterMetragem() %></td>
+			<td><%= ambiente.custo() %></td>
+			<td><%= ambiente.tempoEntrega() %></td>
 			<td>
+				<% if (ambiente.obterItens().size() > 0) { %>
+					<% for (ItemVenda item : ambiente.obterItens()) { %>
+						<%= item.obterMobilia().obterDescricao() %> 
+						(<%= item.obterQuantidade() %>)<br>
+					<% } %>
+				<% } else %> Nenhum
+			</td>
+			<td>
+				<a href="item/ler?ambiente_id=<%= ambiente.obterId() %>">
+					Itens
+				</a>&nbsp;
 				<a href="alterar?id=<%= ambiente.obterId() %>">
 					Editar
 				</a>&nbsp; 
@@ -47,7 +64,7 @@
 	</tbody>
 </table>
 
-<a href="..">Voltar</a>
+<a href="../ler">Voltar</a>
 <a href="criar?contrato_id=<%= contratoId %>">Criar</a>
 
 </body>

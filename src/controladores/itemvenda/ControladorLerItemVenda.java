@@ -18,7 +18,7 @@ import persistencia.ItemVendaBanco;
 /**
  * Servlet implementation class ControladorLerItemVenda
  */
-@WebServlet("/itemvenda/ler")
+@WebServlet("/contrato/ambiente/item/ler")
 public class ControladorLerItemVenda extends HttpServlet {
 	private static final long serialVersionUID = 1L;
  
@@ -27,18 +27,27 @@ public class ControladorLerItemVenda extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		List<ItemVenda> itemVendas = null;
+		int ambienteId;
+		
+		try {
+			ambienteId = Integer.parseInt(request.getParameter("ambiente_id"));
+		} catch (NumberFormatException e) {
+			response.sendRedirect("../ler");
+			return;
+		}
 		
 		try (ItemVendaBanco bd = new ItemVendaBanco()) {
-			itemVendas = bd.get();
+			itemVendas = bd.getWhereAmbienteId(ambienteId);
 		} catch (Exception e) {
 			response.getWriter().append("Erro ao acessar o banco de dados: \n");
 			e.printStackTrace(response.getWriter());
 			return;
 		}
 		
+		request.setAttribute("ambiente_id", ambienteId);
 		request.setAttribute("itemVendas", itemVendas);
 		
-		RequestDispatcher rd = request.getRequestDispatcher("../FronteiraLerItemVenda.jsp");
+		RequestDispatcher rd = request.getRequestDispatcher("../../../FronteiraLerItemVenda.jsp");
 		rd.forward(request, response);
 	}
 
