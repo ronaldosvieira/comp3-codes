@@ -10,7 +10,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import entidades.Quarto;
+import excecoes.DatabaseAccessException;
 import persistencia.ComodoBanco;
+import roteiros.quarto.AlterarQuartoTS;
+import roteiros.quarto.ObterQuartoTS;
 
 /**
  * Servlet implementation class ControladorAlterarQuarto
@@ -33,16 +36,14 @@ public class ControladorAlterarQuarto extends HttpServlet {
 			return;
 		}
 		
-		try (ComodoBanco bd = new ComodoBanco()) {
-			quarto = (Quarto) bd.get(id);
-		} catch (Exception e) {
-			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+		try {
+			quarto = ObterQuartoTS.execute(id);
+			
+			request.setAttribute("id", id);
+			request.setAttribute("quarto", quarto);
+		} catch (DatabaseAccessException e) {
 			e.printStackTrace(response.getWriter());
-			return;
 		}
-		
-		request.setAttribute("id", id);
-		request.setAttribute("quarto", quarto);
 		
 		RequestDispatcher rd = request.getRequestDispatcher("../FronteiraAlterarQuarto.jsp");
 		rd.forward(request, response);
@@ -55,16 +56,10 @@ public class ControladorAlterarQuarto extends HttpServlet {
 		int id = Integer.parseInt(request.getParameter("id"));
 		String descricao = request.getParameter("descricao");
 
-		try (ComodoBanco bd = new ComodoBanco()) {
-			Quarto quarto = (Quarto) bd.get(id);
-			
-			quarto.alterarDescricao(descricao);
-			
-			bd.update(id, quarto);
-		} catch (Exception e) {
-			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+		try {
+			AlterarQuartoTS.execute(id, descricao);
+		} catch (DatabaseAccessException e) {
 			e.printStackTrace(response.getWriter());
-			return;
 		}
 		
 		response.sendRedirect("ler");
