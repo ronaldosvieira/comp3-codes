@@ -11,7 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import entidades.Mobilia;
+import excecoes.DatabaseAccessException;
 import persistencia.MobiliaBanco;
+import roteiros.mobilia.LerMobiliaTS;
 
 /**
  * Servlet implementation class ControladorLerMobilia
@@ -24,17 +26,14 @@ public class ControladorLerMobilia extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		List<Mobilia> mobilias = null;
-		
-		try (MobiliaBanco bd = new MobiliaBanco()) {
-			mobilias = bd.get();
-		} catch (Exception e) {
-			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+		List<Mobilia> mobilias;
+		try {
+			mobilias = LerMobiliaTS.execute();
+			
+			request.setAttribute("mobilias", mobilias);
+		} catch (DatabaseAccessException e) {
 			e.printStackTrace(response.getWriter());
-			return;
 		}
-		
-		request.setAttribute("mobilias", mobilias);
 		
 		RequestDispatcher rd = request.getRequestDispatcher("../FronteiraLerMobilia.jsp");
 		rd.forward(request, response);

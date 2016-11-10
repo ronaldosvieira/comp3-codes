@@ -13,8 +13,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import entidades.Comodo;
 import entidades.Mobilia;
+import excecoes.DatabaseAccessException;
 import persistencia.ComodoBanco;
 import persistencia.MobiliaBanco;
+import roteiros.itemvenda.GuardarItemVendaTS;
+import roteiros.mobilia.GuardarMobiliaTS;
 
 /**
  * Servlet implementation class ControladorCriarMobilia
@@ -29,13 +32,7 @@ public class ControladorCriarMobilia extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		List<Comodo> comodos = new ArrayList<>();
 		
-		try (ComodoBanco cb = new ComodoBanco()) {
-			comodos = cb.get();
-		} catch (Exception e) {
-			response.getWriter().append("Erro ao acessar o banco de dados: \n");
-			e.printStackTrace(response.getWriter());
-			return;
-		}
+		comodos = LerComodoTS.execute();
 		request.setAttribute("comodos", comodos);
 		
 		RequestDispatcher rd = request.getRequestDispatcher("../FronteiraCriarMobilia.jsp");
@@ -50,27 +47,15 @@ public class ControladorCriarMobilia extends HttpServlet {
 		Float custo = Float.parseFloat(request.getParameter("custo"));
 		int tempoEntrega = Integer.parseInt(request.getParameter("tempoEntrega"));
 		String[] comodosStr = request.getParameterValues("comodos");
+		int[] comodosInt = new int[comodosStr.length];
 		
-		try (MobiliaBanco bd = new MobiliaBanco();
-				ComodoBanco comodoBd = new ComodoBanco()) {
-			Mobilia mobilia = new Mobilia(descricao, custo, tempoEntrega);
-			
-			int id = bd.insert(mobilia);
-			
-			mobilia = new Mobilia(id, 
-					mobilia.obterDescricao(), 
-					mobilia.obterCusto(), 
-					mobilia.obterTempoEntrega());
-			
-			for (String comodoStr : comodosStr) {
-				Comodo comodo = comodoBd.get(Integer.parseInt(comodoStr));
-				
-				comodo.associarMobilia(mobilia);
-				
-				comodoBd.update(comodo.obterId(), comodo);
-			}
-		} catch (Exception e) {
-			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+		for (int i = 0; i < comodosStr.length; i++) {
+			comodosInt[i] = Integer.parseInt(comodosStr[i]);
+		}
+		
+		try {
+			GuardarMobiliaTS.execute(descricao, custo, tempoEntrega, comodosInt);
+		} catch (DatabaseAccessException e) {
 			e.printStackTrace(response.getWriter());
 		}
 		

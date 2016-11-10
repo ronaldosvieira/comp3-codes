@@ -16,7 +16,7 @@ import entidades.ItemVenda;
 import excecoes.DatabaseAccessException;
 import persistencia.ItemVendaBanco;
 import persistencia.MobiliaBanco;
-import roteiros.itemvenda.GuardarMobiliaTS;
+import roteiros.itemvenda.GuardarItemVendaTS;
 
 /**
  * Servlet implementation class ControladorCriarItemVenda
@@ -57,7 +57,7 @@ public class ControladorCriarItemVenda extends HttpServlet {
 		int ambienteId = Integer.parseInt(request.getParameter("ambiente_id"));
 		
 		try {
-			GuardarMobiliaTS.execute(quantidade, mobiliaId, ambienteId);
+			GuardarItemVendaTS.execute(quantidade, mobiliaId, ambienteId);
 		} catch (DatabaseAccessException e) {
 			e.printStackTrace(response.getWriter());
 		}

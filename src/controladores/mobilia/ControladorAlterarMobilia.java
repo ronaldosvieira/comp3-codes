@@ -15,8 +15,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import entidades.Comodo;
 import entidades.Mobilia;
+import excecoes.DatabaseAccessException;
 import persistencia.ComodoBanco;
 import persistencia.MobiliaBanco;
+import roteiros.mobilia.AlterarMobiliaTS;
+import roteiros.mobilia.ObterMobiliaTS;
 
 /**
  * Servlet implementation class ControladorAtualizarMobilia
@@ -40,18 +43,17 @@ public class ControladorAlterarMobilia extends HttpServlet {
 			return;
 		}
 		
-		try (MobiliaBanco bd = new MobiliaBanco();
-				ComodoBanco comodoBd = new ComodoBanco()) {
-			Mobilia mobilia = bd.get(id);
-			comodos = comodoBd.get();
+		try {
+			Mobilia mobilia = ObterMobiliaTS.execute(id);
+			comodos = LerComodoTS.execute();
 			comodosMobilia = comodos.stream().filter(c -> c.listaMobiliaDisponivel().contains(mobilia)).collect(Collectors.toList());
 		
 			request.setAttribute("id", id);
 			request.setAttribute("mobilia", mobilia);
 			request.setAttribute("comodos", comodos);
 			request.setAttribute("comodosMobilia", comodosMobilia);
-		} catch (Exception e) {
-			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+		} catch (DatabaseAccessException e) {
+			response.getWriter().append(e.getMessage());
 			e.printStackTrace(response.getWriter());
 			return;
 		}
@@ -68,38 +70,12 @@ public class ControladorAlterarMobilia extends HttpServlet {
 		String descricao = request.getParameter("descricao");
 		Float custo = Float.parseFloat(request.getParameter("custo"));
 		int tempoEntrega = Integer.parseInt(request.getParameter("tempoEntrega"));
-		List<String> newComodos = Arrays.asList(request.getParameterValues("comodos"));
-		List<Comodo> oldComodos = new ArrayList<>();
+		List<String> comodos = Arrays.asList(request.getParameterValues("comodos"));
 		
-		Mobilia mobilia = new Mobilia(id, descricao, custo, tempoEntrega);
-		
-		try (MobiliaBanco bd = new MobiliaBanco();
-				ComodoBanco comodoBd = new ComodoBanco()) {
-			bd.update(id, mobilia);
-			
-			oldComodos = comodoBd.get().stream()
-					.filter(c -> c.listaMobiliaDisponivel().contains(mobilia))
-					.collect(Collectors.toList());
-			
-			for (String comodoStr : newComodos) {
-				Comodo comodo = comodoBd.get(Integer.parseInt(comodoStr));
-				
-				comodo.associarMobilia(mobilia);
-				
-				comodoBd.update(comodo.obterId(), comodo);
-			}
-			
-			for (Comodo comodo : oldComodos) {
-				if (!newComodos.contains(String.valueOf(comodo.obterId()))) {
-					comodo.desassociarMobilia(mobilia);
-					
-					comodoBd.update(comodo.obterId(), comodo);
-				}
-			}
-		} catch (Exception e) {
-			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+		try {
+			AlterarMobiliaTS.execute(id, descricao, custo, tempoEntrega, comodos);
+		} catch (DatabaseAccessException e) {
 			e.printStackTrace(response.getWriter());
-			return;
 		}
 		
 		response.sendRedirect("ler");

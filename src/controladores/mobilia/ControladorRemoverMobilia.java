@@ -9,7 +9,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import excecoes.DatabaseAccessException;
 import persistencia.MobiliaBanco;
+import roteiros.mobilia.RemoverMobiliaTS;
 
 /**
  * Servlet implementation class ControladorRemoverMobilia
@@ -36,12 +38,10 @@ public class ControladorRemoverMobilia extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int id = Integer.parseInt(request.getParameter("id"));
 
-		try (MobiliaBanco bd = new MobiliaBanco()) {
-			bd.remove(id);
-		} catch (Exception e) {
-			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+		try {
+			RemoverMobiliaTS.execute(id);
+		} catch (DatabaseAccessException e) {
 			e.printStackTrace(response.getWriter());
-			return;
 		}
 		
 		response.sendRedirect("ler");
