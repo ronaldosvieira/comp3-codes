@@ -144,13 +144,13 @@ public class ItemVendaBanco implements AutoCloseable {
 		return -1;
 	}
 
-	public void update(int id, ItemVenda ItemVenda) throws SQLException {
+	public void update(int id, int quantidade) throws SQLException {
 		String sql = "update item_venda set "
 				+ "quantidade = ? "
 				+ "where id = ?";
 		
 		PreparedStatement stmt = conn.prepareStatement(sql);
-		stmt.setInt(1, ItemVenda.obterQuantidade());
+		stmt.setInt(1, quantidade);
 		stmt.setInt(2, id);
 		
 		stmt.executeUpdate();

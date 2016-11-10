@@ -12,8 +12,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import entidades.ItemVenda;
+import excecoes.DatabaseAccessException;
 import entidades.ItemVenda;
 import persistencia.ItemVendaBanco;
+import roteiros.itemvenda.LerItemVendaTS;
+import roteiros.itemvenda.ObterItemVendaTS;
 
 /**
  * Servlet implementation class ControladorLerItemVenda
@@ -36,16 +39,14 @@ public class ControladorLerItemVenda extends HttpServlet {
 			return;
 		}
 		
-		try (ItemVendaBanco bd = new ItemVendaBanco()) {
-			itemVendas = bd.getWhereAmbienteId(ambienteId);
-		} catch (Exception e) {
-			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+		try {
+			itemVendas = LerItemVendaTS.execute(ambienteId);
+			
+			request.setAttribute("ambiente_id", ambienteId);
+			request.setAttribute("itemVendas", itemVendas);
+		} catch (DatabaseAccessException e) {
 			e.printStackTrace(response.getWriter());
-			return;
 		}
-		
-		request.setAttribute("ambiente_id", ambienteId);
-		request.setAttribute("itemVendas", itemVendas);
 		
 		RequestDispatcher rd = request.getRequestDispatcher("../../../FronteiraLerItemVenda.jsp");
 		rd.forward(request, response);

@@ -2,6 +2,7 @@ package controladores.itemvenda;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -10,10 +11,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import entidades.Comodo;
 import entidades.ItemVenda;
-import persistencia.ComodoBanco;
+import excecoes.DatabaseAccessException;
 import persistencia.ItemVendaBanco;
 import persistencia.MobiliaBanco;
+import roteiros.itemvenda.GuardarMobiliaTS;
 
 /**
  * Servlet implementation class ControladorCriarItemVenda
@@ -28,10 +31,11 @@ public class ControladorCriarItemVenda extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int ambienteId;
 		
-		try (ComodoBanco bd = new ComodoBanco()) {
+		try {
 			ambienteId = Integer.parseInt(request.getParameter("ambiente_id"));
+			List<Comodo> comodos = LerComodoTS.execute();
 			
-			request.setAttribute("comodos", bd.get());
+			request.setAttribute("comodos", comodos);
 			request.setAttribute("ambiente_id", ambienteId);
 		} catch (NumberFormatException e) {
 			response.sendRedirect("ler");
@@ -52,13 +56,9 @@ public class ControladorCriarItemVenda extends HttpServlet {
 		int mobiliaId = Integer.parseInt(request.getParameter("mobilia_id"));
 		int ambienteId = Integer.parseInt(request.getParameter("ambiente_id"));
 		
-		try (ItemVendaBanco bd = new ItemVendaBanco();
-				MobiliaBanco mobiliaBd = new MobiliaBanco()) {
-			ItemVenda itemVenda = new ItemVenda(quantidade, mobiliaBd.get(mobiliaId), ambienteId);
-			
-			int id = bd.insert(itemVenda);
-		} catch (Exception e) {
-			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+		try {
+			GuardarMobiliaTS.execute(quantidade, mobiliaId, ambienteId);
+		} catch (DatabaseAccessException e) {
 			e.printStackTrace(response.getWriter());
 		}
 		

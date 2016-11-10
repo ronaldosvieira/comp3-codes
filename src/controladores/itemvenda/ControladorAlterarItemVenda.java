@@ -10,7 +10,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import entidades.ItemVenda;
+import excecoes.DatabaseAccessException;
 import persistencia.ItemVendaBanco;
+import roteiros.itemvenda.AlterarItemVendaTS;
+import roteiros.itemvenda.ObterItemVendaTS;
 
 /**
  * Servlet implementation class ControladorRemoverItemVenda
@@ -25,8 +28,8 @@ public class ControladorAlterarItemVenda extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int id = Integer.parseInt(request.getParameter("id"));
 		
-		try (ItemVendaBanco bd = new ItemVendaBanco()) {
-			ItemVenda item = bd.get(id);
+		try {
+			ItemVenda item = ObterItemVendaTS.execute(id);
 			
 			request.setAttribute("itemVenda", item);
 		} catch (Exception e) {
@@ -44,13 +47,12 @@ public class ControladorAlterarItemVenda extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int id = Integer.parseInt(request.getParameter("id"));
-
-		try (ItemVendaBanco bd = new ItemVendaBanco()) {
-			bd.remove(id);
-		} catch (Exception e) {
-			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+		int quantidade = Integer.parseInt(request.getParameter("quantidade"));
+		
+		try {
+			AlterarItemVendaTS.execute(id, quantidade);
+		} catch (DatabaseAccessException e) {
 			e.printStackTrace(response.getWriter());
-			return;
 		}
 		
 		response.sendRedirect("ler");
