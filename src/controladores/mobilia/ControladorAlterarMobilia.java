@@ -18,6 +18,7 @@ import entidades.Mobilia;
 import excecoes.DatabaseAccessException;
 import persistencia.ComodoBanco;
 import persistencia.MobiliaBanco;
+import roteiros.comodo.LerComodoTS;
 import roteiros.mobilia.AlterarMobiliaTS;
 import roteiros.mobilia.ObterMobiliaTS;
 

@@ -1,7 +1,6 @@
 package controladores.comodocomposto;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
@@ -12,9 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import entidades.Comodo;
-import entidades.ComodoComposto;
 import excecoes.DatabaseAccessException;
-import persistencia.ComodoBanco;
+import roteiros.comodo.LerComodoTS;
 import roteiros.comodocomposto.GuardarComodoCompostoTS;
 
 /**
@@ -31,7 +29,7 @@ public class ControladorCriarComodoComposto extends HttpServlet {
 		List<Comodo> comodos;
 		
 		try {
-			comodos = ObterComodoTS.execute();
+			comodos = LerComodoTS.execute();
 			
 			request.setAttribute("comodos", comodos);
 		} catch (DatabaseAccessException e) {

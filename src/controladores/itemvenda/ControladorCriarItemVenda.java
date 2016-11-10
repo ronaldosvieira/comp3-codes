@@ -16,6 +16,7 @@ import entidades.ItemVenda;
 import excecoes.DatabaseAccessException;
 import persistencia.ItemVendaBanco;
 import persistencia.MobiliaBanco;
+import roteiros.comodo.LerComodoTS;
 import roteiros.itemvenda.GuardarItemVendaTS;
 
 /**
@@ -39,8 +40,7 @@ public class ControladorCriarItemVenda extends HttpServlet {
 			request.setAttribute("ambiente_id", ambienteId);
 		} catch (NumberFormatException e) {
 			response.sendRedirect("ler");
-		} catch (SQLException | ClassNotFoundException e) {
-			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+		} catch (DatabaseAccessException e) {
 			e.printStackTrace(response.getWriter());
 		}
 		

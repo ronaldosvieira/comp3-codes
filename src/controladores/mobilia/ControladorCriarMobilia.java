@@ -16,6 +16,7 @@ import entidades.Mobilia;
 import excecoes.DatabaseAccessException;
 import persistencia.ComodoBanco;
 import persistencia.MobiliaBanco;
+import roteiros.comodo.LerComodoTS;
 import roteiros.itemvenda.GuardarItemVendaTS;
 import roteiros.mobilia.GuardarMobiliaTS;
 
@@ -32,8 +33,13 @@ public class ControladorCriarMobilia extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		List<Comodo> comodos = new ArrayList<>();
 		
-		comodos = LerComodoTS.execute();
-		request.setAttribute("comodos", comodos);
+		try {
+			comodos = LerComodoTS.execute();
+
+			request.setAttribute("comodos", comodos);
+		} catch (DatabaseAccessException e) {
+			e.printStackTrace(response.getWriter());
+		}
 		
 		RequestDispatcher rd = request.getRequestDispatcher("../FronteiraCriarMobilia.jsp");
 		rd.forward(request, response);

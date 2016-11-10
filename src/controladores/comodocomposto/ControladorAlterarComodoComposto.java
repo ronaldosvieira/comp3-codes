@@ -15,6 +15,7 @@ import entidades.Comodo;
 import entidades.ComodoComposto;
 import excecoes.DatabaseAccessException;
 import persistencia.ComodoBanco;
+import roteiros.comodo.LerComodoTS;
 import roteiros.comodocomposto.AlterarComodoCompostoTS;
 import roteiros.comodocomposto.ObterComodoCompostoTS;
 
