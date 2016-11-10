@@ -10,7 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import entidades.Sala;
+import excecoes.DatabaseAccessException;
 import persistencia.ComodoBanco;
+import roteiros.sala.GuardarSalaTS;
 
 /**
  * Servlet implementation class ControladorCriarSala
@@ -33,12 +35,9 @@ public class ControladorCriarSala extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String descricao = request.getParameter("descricao");
 		
-		Sala sala = new Sala(descricao);
-		
-		try (ComodoBanco bd = new ComodoBanco()) {
-			bd.insert(sala);
-		} catch (Exception e) {
-			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+		try {
+			GuardarSalaTS.execute(descricao);
+		} catch (DatabaseAccessException e) {
 			e.printStackTrace(response.getWriter());
 		}
 		

@@ -11,7 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import entidades.Comodo;
+import excecoes.DatabaseAccessException;
 import persistencia.ComodoBanco;
+import roteiros.sala.LerSalaTS;
 
 /**
  * Servlet implementation class ControladorLerSala
@@ -24,17 +26,14 @@ public class ControladorLerSala extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		List<Comodo> salas = null;
-		
-		try (ComodoBanco bd = new ComodoBanco()) {
-			salas = bd.get("sala");
-		} catch (Exception e) {
-			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+		List<Comodo> salas;
+		try {
+			salas = LerSalaTS.execute();
+
+			request.setAttribute("salas", salas);
+		} catch (DatabaseAccessException e) {
 			e.printStackTrace(response.getWriter());
-			return;
 		}
-		
-		request.setAttribute("salas", salas);
 		
 		RequestDispatcher rd = request.getRequestDispatcher("../FronteiraLerSala.jsp");
 		rd.forward(request, response);
