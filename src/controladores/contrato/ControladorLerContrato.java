@@ -11,7 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import entidades.Contrato;
+import excecoes.DatabaseAccessException;
 import persistencia.ContratoBanco;
+import roteiros.contrato.LerContratosTS;
 
 /**
  * Servlet implementation class ControladorLerContrato
@@ -24,17 +26,14 @@ public class ControladorLerContrato extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		List<Contrato> contratos = null;
-		
-		try (ContratoBanco bd = new ContratoBanco()) {
-			contratos = bd.get();
-		} catch (Exception e) {
-			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+		List<Contrato> contratos;
+		try {
+			contratos = LerContratosTS.execute();
+			
+			request.setAttribute("contratos", contratos);
+		} catch (DatabaseAccessException e) {
 			e.printStackTrace(response.getWriter());
-			return;
 		}
-		
-		request.setAttribute("contratos", contratos);
 		
 		RequestDispatcher rd = request.getRequestDispatcher("../FronteiraLerContrato.jsp");
 		rd.forward(request, response);

@@ -10,7 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import entidades.Contrato;
+import excecoes.DatabaseAccessException;
 import persistencia.ContratoBanco;
+import roteiros.contrato.GuardarContratoTS;
 
 /**
  * Servlet implementation class ControladorCriarContrato
@@ -33,12 +35,9 @@ public class ControladorCriarContrato extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Float comissao = Float.parseFloat(request.getParameter("comissao"));
 		
-		Contrato contrato = new Contrato(comissao);
-		
-		try (ContratoBanco bd = new ContratoBanco()) {
-			bd.insert(contrato);
-		} catch (Exception e) {
-			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+		try {
+			GuardarContratoTS.execute(comissao);
+		} catch (DatabaseAccessException e) {
 			e.printStackTrace(response.getWriter());
 		}
 		

@@ -10,7 +10,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import entidades.Contrato;
+import excecoes.DatabaseAccessException;
 import persistencia.ContratoBanco;
+import roteiros.contrato.AlterarContratoTS;
+import roteiros.contrato.ObterContratoTS;
 
 /**
  * Servlet implementation class ControladorAlterarContrato
@@ -33,16 +36,14 @@ public class ControladorAlterarContrato extends HttpServlet {
 			return;
 		}
 		
-		try (ContratoBanco bd = new ContratoBanco()) {
-			contrato = bd.get(id);
-		} catch (Exception e) {
-			response.getWriter().append("Erro ao acessar o banco de dados: \n");
-			e.printStackTrace(response.getWriter());
-			return;
+		try {
+			contrato = ObterContratoTS.execute(id);
+			
+			request.setAttribute("id", id);
+			request.setAttribute("contrato", contrato);
+		} catch (DatabaseAccessException e) {
+			e.printStackTrace();
 		}
-		
-		request.setAttribute("id", id);
-		request.setAttribute("contrato", contrato);
 		
 		RequestDispatcher rd = request.getRequestDispatcher("../FronteiraAlterarContrato.jsp");
 		rd.forward(request, response);
@@ -55,14 +56,10 @@ public class ControladorAlterarContrato extends HttpServlet {
 		int id = Integer.parseInt(request.getParameter("id"));
 		float comissao = Float.parseFloat(request.getParameter("comissao"));
 		
-		Contrato contrato = new Contrato(id, comissao);
-		
-		try (ContratoBanco bd = new ContratoBanco()) {
-			bd.update(id, contrato);
-		} catch (Exception e) {
-			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+		try {
+			AlterarContratoTS.execute(id, comissao);
+		} catch (DatabaseAccessException e) {
 			e.printStackTrace(response.getWriter());
-			return;
 		}
 		
 		response.sendRedirect("ler");

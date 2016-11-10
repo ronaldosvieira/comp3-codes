@@ -9,7 +9,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import excecoes.DatabaseAccessException;
 import persistencia.ContratoBanco;
+import roteiros.contrato.RemoverContratoTS;
 
 /**
  * Servlet implementation class ControladorRemoverContrato
@@ -36,12 +38,10 @@ public class ControladorRemoverContrato extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int id = Integer.parseInt(request.getParameter("id"));
 
-		try (ContratoBanco bd = new ContratoBanco()) {
-			bd.remove(id);
-		} catch (Exception e) {
-			response.getWriter().append("Erro ao acessar o banco de dados: \n");
-			e.printStackTrace(response.getWriter());
-			return;
+		try {
+			RemoverContratoTS.execute(id);
+		} catch (DatabaseAccessException e) {
+			e.printStackTrace();
 		}
 		
 		response.sendRedirect("ler");
