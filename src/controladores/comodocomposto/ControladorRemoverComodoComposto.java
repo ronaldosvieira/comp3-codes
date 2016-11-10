@@ -12,7 +12,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import entidades.Comodo;
 import entidades.ComodoComposto;
+import excecoes.BusinessLogicException;
+import excecoes.DatabaseAccessException;
 import persistencia.ComodoBanco;
+import roteiros.comodocomposto.RemoverComodoCompostoTS;
 
 /**
  * Servlet implementation class ControladorRemoverComodoComposto
@@ -39,28 +42,10 @@ public class ControladorRemoverComodoComposto extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int id = Integer.parseInt(request.getParameter("id"));
 
-		try (ComodoBanco bd = new ComodoBanco()) {
-			Comodo comodo = bd.get(id);
-			
-			if (!comodo.listaMobiliaDisponivel().isEmpty()) {
-				response.getWriter().append("O cômodo '" + comodo.obterDescricao() + 
-						"' não pode ser removido, pois, existem mobílias associadas a ele.");
-				return;
-			}
-			
-			for (Comodo comodoComposto : bd.get("comodo_composto")) {
-				if (((ComodoComposto) comodoComposto).obterComodos().contains(comodo)) {
-					response.getWriter().append("O cômodo '" + comodo.obterDescricao() + 
-							"' não pode ser removido, pois, existem cômodos compostos associados a ele.");
-					return;
-				}
-			}
-			
-			bd.remove(id);
-		} catch (Exception e) {
-			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+		try {
+			RemoverComodoCompostoTS.execute(id);
+		} catch (DatabaseAccessException | BusinessLogicException e) {
 			e.printStackTrace(response.getWriter());
-			return;
 		}
 		
 		response.sendRedirect("ler");

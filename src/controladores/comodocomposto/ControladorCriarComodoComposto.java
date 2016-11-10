@@ -13,7 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import entidades.Comodo;
 import entidades.ComodoComposto;
+import excecoes.DatabaseAccessException;
 import persistencia.ComodoBanco;
+import roteiros.comodocomposto.GuardarComodoCompostoTS;
 
 /**
  * Servlet implementation class ControladorCriarComodoComposto
@@ -28,12 +30,11 @@ public class ControladorCriarComodoComposto extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		List<Comodo> comodos;
 		
-		try (ComodoBanco bd = new ComodoBanco()) {
-			comodos = bd.get();
+		try {
+			comodos = ObterComodoTS.execute();
 			
 			request.setAttribute("comodos", comodos);
-		} catch (Exception e) {
-			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+		} catch (DatabaseAccessException e) {
 			e.printStackTrace(response.getWriter());
 		}
 		
@@ -47,20 +48,15 @@ public class ControladorCriarComodoComposto extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String descricao = request.getParameter("descricao");
 		String[] comodosStr = request.getParameterValues("comodos");
-		List<Comodo> comodos = new ArrayList<>();
+		int[] comodosInt = new int[comodosStr.length];
 		
-		try (ComodoBanco bd = new ComodoBanco()) {
-			ComodoComposto comodoComposto = new ComodoComposto(descricao);
-			
-			for (String comodo : comodosStr) {
-				comodos.add(bd.get(Integer.parseInt(comodo)));
-			}
-			
-			comodoComposto.alterarComodos(comodos);
-			
-			bd.insert(comodoComposto);
-		} catch (Exception e) {
-			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+		for (int i = 0; i < comodosStr.length; i++) {
+			comodosInt[i] = Integer.parseInt(comodosStr[i]);
+		}
+		
+		try {
+			GuardarComodoCompostoTS.execute(descricao, comodosInt);
+		} catch (DatabaseAccessException e) {
 			e.printStackTrace(response.getWriter());
 		}
 		

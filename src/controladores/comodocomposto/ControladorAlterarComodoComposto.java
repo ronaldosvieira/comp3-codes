@@ -13,7 +13,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import entidades.Comodo;
 import entidades.ComodoComposto;
+import excecoes.DatabaseAccessException;
 import persistencia.ComodoBanco;
+import roteiros.comodocomposto.AlterarComodoCompostoTS;
+import roteiros.comodocomposto.ObterComodoCompostoTS;
 
 /**
  * Servlet implementation class ControladorAlterarComodoComposto
@@ -37,20 +40,16 @@ public class ControladorAlterarComodoComposto extends HttpServlet {
 			return;
 		}
 		
-		try (ComodoBanco bd = new ComodoBanco()) {
-			comodoComposto = (ComodoComposto) bd.get(id);
-			comodos = bd.get();
+		try {
+			comodoComposto = ObterComodoCompostoTS.execute(id);
+			comodos = LerComodoTS.execute();
 			
-			;
-		} catch (Exception e) {
-			response.getWriter().append("Erro ao acessar o banco de dados: \n");
-			e.printStackTrace(response.getWriter());
-			return;
+			request.setAttribute("id", id);
+			request.setAttribute("comodoComposto", comodoComposto);
+			request.setAttribute("comodos", comodos);
+		} catch (DatabaseAccessException e) {
+			e.printStackTrace();
 		}
-		
-		request.setAttribute("id", id);
-		request.setAttribute("comodoComposto", comodoComposto);
-		request.setAttribute("comodos", comodos);
 		
 		RequestDispatcher rd = request.getRequestDispatcher("../FronteiraAlterarComodoComposto.jsp");
 		rd.forward(request, response);
@@ -63,23 +62,16 @@ public class ControladorAlterarComodoComposto extends HttpServlet {
 		int id = Integer.parseInt(request.getParameter("id"));
 		String descricao = request.getParameter("descricao");
 		String[] comodosStr = request.getParameterValues("comodos");
-		List<Comodo> comodos = new ArrayList<>();
+		int[] comodosInt = new int[comodosStr.length];
 		
-		try (ComodoBanco bd = new ComodoBanco()) {
-			ComodoComposto comodoComposto = (ComodoComposto) bd.get(id);
-			
-			for (String comodo : comodosStr) {
-				comodos.add(bd.get(Integer.parseInt(comodo)));
-			}
-			
-			comodoComposto.alterarDescricao(descricao);
-			comodoComposto.alterarComodos(comodos);
-			
-			bd.update(id, comodoComposto);
-		} catch (Exception e) {
-			response.getWriter().append("Erro ao acessar o banco de dados: \n");
-			e.printStackTrace(response.getWriter());
-			return;
+		for (int i = 0; i < comodosStr.length; i++) {
+			comodosInt[i] = Integer.parseInt(comodosStr[i]);
+		}
+		
+		try {
+			AlterarComodoCompostoTS.execute(id, descricao, comodosInt);
+		} catch (DatabaseAccessException e) {
+			e.printStackTrace();
 		}
 		
 		response.sendRedirect("ler");
