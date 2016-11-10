@@ -12,7 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import entidades.Cozinha;
+import excecoes.DatabaseAccessException;
 import persistencia.ComodoBanco;
+import roteiros.cozinha.AlterarCozinhaTS;
+import roteiros.cozinha.ObterCozinhaTS;
 
 /**
  * Servlet implementation class ControladorAlterarCozinha
@@ -35,20 +38,18 @@ public class ControladorAlterarCozinha extends HttpServlet {
 			return;
 		}
 		
-		try (ComodoBanco bd = new ComodoBanco()) {
-			cozinha = (Cozinha) bd.get(id);
-		} catch (SQLException | ClassNotFoundException e) {
-			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+		try {
+			cozinha = ObterCozinhaTS.execute(id);
+			
+			request.setAttribute("id", id);
+			request.setAttribute("cozinha", cozinha);
+		} catch (DatabaseAccessException e) {
 			e.printStackTrace(response.getWriter());
-			return;
 		} catch (IndexOutOfBoundsException e) {
 			response.getWriter().append("Cozinha com id " + id + " não existe!");
 		} catch (ClassCastException e) {
 			response.getWriter().append("Cozinha inválida!");
 		}
-		
-		request.setAttribute("id", id);
-		request.setAttribute("cozinha", cozinha);
 		
 		RequestDispatcher rd = request.getRequestDispatcher("../FronteiraAlterarCozinha.jsp");
 		rd.forward(request, response);
@@ -61,16 +62,10 @@ public class ControladorAlterarCozinha extends HttpServlet {
 		int id = Integer.parseInt(request.getParameter("id"));
 		String descricao = request.getParameter("descricao");
 		
-		try (ComodoBanco bd = new ComodoBanco()) {
-			Cozinha cozinha = (Cozinha) bd.get(id);
-			
-			cozinha.alterarDescricao(descricao);
-			
-			bd.update(id, cozinha);
-		} catch (Exception e) {
-			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+		try {
+			AlterarCozinhaTS.execute(id, descricao);
+		} catch (DatabaseAccessException e) {
 			e.printStackTrace(response.getWriter());
-			return;
 		}
 		
 		response.sendRedirect("ler");

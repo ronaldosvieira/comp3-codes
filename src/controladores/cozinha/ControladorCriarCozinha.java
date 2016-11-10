@@ -10,7 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import entidades.Cozinha;
+import excecoes.DatabaseAccessException;
 import persistencia.ComodoBanco;
+import roteiros.cozinha.GuardarCozinhaTS;
 
 /**
  * Servlet implementation class ControladorCriarCozinha
@@ -33,12 +35,9 @@ public class ControladorCriarCozinha extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String descricao = request.getParameter("descricao");
 		
-		Cozinha cozinha = new Cozinha(descricao);
-		
-		try (ComodoBanco bd = new ComodoBanco()) {
-			bd.insert(cozinha);
-		} catch (Exception e) {
-			response.getWriter().append("Erro ao acessar o banco de dados: \n");
+		try {
+			GuardarCozinhaTS.execute(descricao);
+		} catch (DatabaseAccessException e) {
 			e.printStackTrace(response.getWriter());
 		}
 		

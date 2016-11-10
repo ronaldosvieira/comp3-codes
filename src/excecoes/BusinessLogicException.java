@@ -1,8 +1,8 @@
 package excecoes;
 
 public class BusinessLogicException extends Exception {
+	private static final long serialVersionUID = 1L;
 	private String message;
-	private static final long serialVersionUID = -2445375960724543419L;
 
 	public BusinessLogicException(String message) {
 		this.message = message;
